@@ -1,0 +1,33 @@
+$headerBg: #2980b9;
+$headerColor: #FFFFFF;
+$bgColor: #F2F2F2;
+$cardBg: #FFFFFF;
+$cardTitleBg: #444444;
+$cardTitleColor: #FFFFFF;
+
+
+
+@import "normalize";
+
+html {
+  background-color: $bgColor;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  height:100%;
+  flex-direction: column;
+}
+
+h1 {
+  background:$headerBg;
+  width:100%;
+  margin:0;
+  padding:15px;
+  text-align: center;
+  color:$headerColor;
+}
+
+@import "board";
