@@ -1,8 +1,8 @@
 import React from 'react';
-import BugsColumn from './BugsColumn.jsx';
+import BugsList from './BugsList.jsx';
 
 export default class extends React.Component {
   render() {
-    return <div><BugsColumn/><BugsColumn/><BugsColumn/></div>;
+    return <div><BugsList/><BugsList/><BugsList/></div>;
   }
 };
