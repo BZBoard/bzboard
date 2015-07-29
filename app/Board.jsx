@@ -3,6 +3,14 @@ import BugsList from './BugsList.jsx';
 
 export default class extends React.Component {
   render() {
-    return <div><BugsList/><BugsList/><BugsList/></div>;
+    return (
+      <div className="board">
+        <BugsList/>
+        <BugsList/>
+        <BugsList/>
+        <BugsList/>
+        <BugsList/>
+      </div>
+    );
   }
 };

@@ -1,0 +1,29 @@
+@import "normalize";
+@import "variables";
+
+html {
+  background-color: $bgColor;
+  height: 100%;
+
+  body {
+    height: 100%;
+  }
+}
+
+.bztasks {
+  h1 {
+    background: $headerBg;
+    width: 100%;
+    margin: 0;
+    padding: 15px;
+    text-align: center;
+    color: $headerColor;
+  }
+
+  .board-wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    @import "board";
+  }
+}
