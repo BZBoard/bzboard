@@ -1,4 +1,4 @@
 import React from 'react';
-import HelloWorld from './HelloWorld.jsx';
+import BZTasks from './BZTasks.jsx';
 
-React.render(<HelloWorld/>, document.getElementById('content'));
+React.render(<BZTasks/>, document.getElementById('content'));
