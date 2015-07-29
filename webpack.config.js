@@ -16,10 +16,14 @@ module.exports = {
         test: /\.scss$/,
         exclude: /node_modules/,
         loader: 'style!css!sass'
+      },
+      {
+        test: /\.svg$/,
+        loader: 'file-loader'
       }
     ]
   },
-  devtool: 'eval',
+  devtool: 'source-map',
   devServer: {
     contentBase: './build',
     hot: true,

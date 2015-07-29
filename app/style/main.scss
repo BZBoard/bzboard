@@ -27,3 +27,23 @@ html {
     @import "board";
   }
 }
+
+.add-buglist {
+  background: transparent url('../images/add.svg') no-repeat center left;
+  background-size: 2em;
+  border: none;
+  flex-shrink: 0;
+  height: 2em;
+  line-height:2em;
+  opacity:0.7;
+  padding: 0 0 0 2em;
+  position: absolute;
+  right:10px;
+  transition:all 0.2s ease;
+  top:15px;
+ 
+  &:hover {
+    opacity:1;
+    transform:scale(1.2);
+  }
+}
