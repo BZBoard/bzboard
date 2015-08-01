@@ -1,11 +1,11 @@
 /**
- * Fetch filter results from bugzilla
+ * Client class that talks to bugzilla
  */
 
 const BZ_DOMAIN = "https://bugzilla.mozilla.org";
 const REST_BUG  = "/rest/bug";
 
-let BzFetch = {
+export default {
   fetch: function(options) {
     return this._fetchFromUrl(this._optionsToUrl(options));
   },
@@ -31,7 +31,12 @@ let BzFetch = {
 
       req.onload = function() {
         if (req.status == 200) {
-          resolve(req.response);
+          try {
+            resolve(JSON.parse(req.response).bugs);
+          } catch (e) {
+            console.log("Failed to parse the request bugs");
+            reject(Error(e));
+          }
         }
         else {
           reject(Error(req.statusText));
