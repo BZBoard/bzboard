@@ -1,3 +1,7 @@
+/**
+ * Fetch filter results from bugzilla
+ */
+
 const BZ_DOMAIN = "https://bugzilla.mozilla.org";
 const REST_BUG  = "/rest/bug";
 
