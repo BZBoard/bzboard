@@ -1,6 +1,6 @@
 import React from 'react';
 import Bug from './Bug.jsx';
-import BzClient from './BzClient.js';
+import BzClient from '../lib/BzClient.js';
 
 export default React.createClass({
   getInitialState: function() {

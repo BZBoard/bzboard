@@ -1,6 +1,6 @@
 import React from 'react';
 import Board from './Board.jsx';
-import './style/main.scss';
+import '../style/main.scss';
 
 export default class extends React.Component {
   render() {
