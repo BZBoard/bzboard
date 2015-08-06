@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter2'
 import Uuid from 'uuid'
 import Dispatcher from '../lib/dispatcher'
 import Constants from '../lib/constants'
-import Filter from '../model/Filter'
+import Filter from '../models/Filter'
 
 let ActionTypes = Constants.action.filter;
 let CHANGE_EVENT = 'change';
