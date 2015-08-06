@@ -1,36 +1,23 @@
 import React from 'react';
 import BugsList from './BugsList.jsx';
-import FilterStore from '../stores/FilterStore';
+import Filter from '../models/Filter';
 import FilterActions from '../actions/FilterActions'
 
-function getStateFromStore() {
-  return {
-    filters: FilterStore.getAll()
-  }
-}
-
 export default React.createClass({
-  getInitialState: function() {
-    return getStateFromStore();
+  propTypes: {
+    filters: React.PropTypes.array
   },
 
-  componentDidMount: function() {
-    FilterStore.addChangeListener(this._onChange);
-  },
-
-  componentWillUnmount: function() {
-    FilterStore.removeChangeListener(this._onChange);
+  componentDidMount: function () {
+    FilterActions.load();
   },
 
   _addBugList: function() {
-    FilterActions.create({
-      name: 'New bug list',
-      value: ''
-    });
+    FilterActions.create(new Filter('New bug list', ''));
   },
 
   render: function() {
-    let filters = this.state.filters;
+    let filters = this.props.filters;
 
     return (
       <div className="board">
@@ -40,9 +27,5 @@ export default React.createClass({
         })}
       </div>
     );
-  },
-
-  _onChange: function() {
-    this.setState(getStateFromStore());
   }
 });
