@@ -1,5 +1,4 @@
-import Events from 'eventemitter2'
-let EventEmitter = Events; // could it be simplified?
+import EventEmitter from 'eventemitter2'
 import Uuid from 'uuid'
 import Dispatcher from '../lib/dispatcher'
 import Constants from '../lib/constants'
