@@ -5,7 +5,7 @@ import FilterActions from '../actions/FilterActions'
 
 function getStateFromStore() {
   return {
-    filters: Array.from(FilterStore.getAll())
+    filters: FilterStore.getAll()
   }
 }
 

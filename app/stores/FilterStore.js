@@ -45,7 +45,7 @@ let FilterStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getAll: function() {
-    return _filters.values();
+    return Array.from(_filters.values());
   }
 
 });
