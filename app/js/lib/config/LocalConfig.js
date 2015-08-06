@@ -17,6 +17,7 @@ LocalConfig.prototype = {
     for (let pref of toRemove) {
       localStorage.removeItem(pref);
     }
+    return Promise.resolve(true);
   }
 };
 
