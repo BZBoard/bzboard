@@ -6,7 +6,7 @@ export default class extends React.Component {
   render() {
     return (
       <div className="bztasks">
-        <h1>BZ Organizer</h1>
+        <h1>BZ Board</h1>
         <div className="board-wrapper">
           <Board/>
         </div>
