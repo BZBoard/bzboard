@@ -1,9 +1,9 @@
 function Config(storageEngine = "localStorage") {
   if (storageEngine === this.STORAGE_ENGINE_LOCAL) {
-    import LocalConfig from './local-config';
+    import LocalConfig from './LocalConfig';
     this.storageEngine = new LocalConfig();
   } else if (storageEngine === this.STORAGE_ENGINE_REMOTE) {
-    import RemoteConfig from './remote-config';
+    import RemoteConfig from './RemoteConfig';
     this.storageEngine = new RemoteConfig();
   } else {
     throw new Error('Unknown config storage engine');

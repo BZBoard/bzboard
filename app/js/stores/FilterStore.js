@@ -1,7 +1,7 @@
 import EventEmitter from 'eventemitter2'
 import Uuid from 'uuid'
-import Dispatcher from '../lib/dispatcher'
-import Constants from '../lib/constants'
+import Dispatcher from '../lib/Dispatcher'
+import Constants from '../lib/Constants'
 import Filter from '../models/Filter'
 
 let ActionTypes = Constants.action.filter;

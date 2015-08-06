@@ -1,5 +1,5 @@
-import AppDispatcher from '../lib/dispatcher'
-import Constants from '../lib/constants'
+import AppDispatcher from '../lib/Dispatcher'
+import Constants from '../lib/Constants'
 
 export default {
   create(filter) {

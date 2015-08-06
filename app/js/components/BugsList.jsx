@@ -1,5 +1,5 @@
 import React from 'react';
-import Bug from './Bug.jsx';
+import BugsListItem from './BugsListItem.jsx';
 import BzClient from '../lib/BzClient.js';
 
 export default React.createClass({
