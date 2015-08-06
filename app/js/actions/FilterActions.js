@@ -5,19 +5,22 @@ export default {
   create(filter) {
     AppDispatcher.dispatch({
       type: Constants.action.filter.CREATE,
-      filter
+      name: filter.name,
+      value: filter.value
     });
   },
   remove(filter) {
     AppDispatcher.dispatch({
       type: Constants.action.filter.REMOVE,
-      filter
+      uid: filter.uid
     });
   },
   update(filter) {
     AppDispatcher.dispatch({
       type: Constants.action.filter.UPDATE,
-      filter
+      uid: filter.uid,
+      name: filter.name,
+      value: filter.value
     });
   },
 };
