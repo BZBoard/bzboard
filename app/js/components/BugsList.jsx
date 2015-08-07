@@ -1,52 +1,66 @@
 import React from 'react';
 import BugsListItem from './BugsListItem.jsx';
 import BzClient from '../lib/BzClient.js';
+import FilterActions from '../actions/FilterActions'
 
 export default React.createClass({
-  getInitialState: function() {
-    let isEditing = this.props.new ? true : false;
-    return {isEditing: isEditing, filter: "ALL owner:rittme"};
+  propTypes: {
+    filter: React.PropTypes.object,
+    bugs: React.PropTypes.object
   },
 
-  toggleFilter: function() {
-    if(this.state.isEditing) {
-      this.fetchBugs();
-    }
-    this.setState({isEditing: !this.state.isEditing, filter: this.state.filter});
+  getInitialState: function() {
+    let isEditing = this.props.new ? true : false;
+    return {
+      newFilterValue: this.props.filter.value,
+      isEditing: isEditing
+    };
+  },
+
+  toggleEditFilter: function() {
+    this.setState({
+      newFilterValue: this.props.filter.value,
+      isEditing: !this.state.isEditing
+    });
   },
 
   changeFilter: function(e) {
-    this.setState({filter: e.target.value});
+    if (e.keyCode == 13) { //Enter key
+      let updatedFilter = Object.assign({}, this.props.filter);
+      updatedFilter.value = this.state.newFilterValue;
+      FilterActions.update(updatedFilter);
+    }
   },
 
-  fetchBugs: function() {
-    let fetchOptions = {quicksearch: this.state.filter};
-    BzClient.fetch(fetchOptions).then((bugs)=>{
-      console.log(bugs);
-      this.setState({bugs: bugs});
-    });
+  onChangeFilterValue: function(e) {
+    this.setState({newFilterValue: e.target.value});
   },
 
   render: function() {
     let showEdit = () => {
       if (this.state.isEditing) {
-        return <input value={this.state.filter} onChange={this.changeFilter} className="edit-filter" />
+        return <input value={this.state.newFilterValue}
+                onChange={this.onChangeFilterValue}
+                onKeyDown={this.changeFilter} className="edit-filter" />
       }
     }
 
     let createBugs = () => {
-      if (this.state.bugs) {
-        return this.state.bugs.map((bug) => {
-          return <Bug key={bug.id} data={bug} />;
-        });
+      let bugs = [];
+      let filterBugs = this.props.bugs[this.props.filter.uid];
+      if (filterBugs) {
+        for (let bug of Object.values(filterBugs)) {
+          bugs.push(<BugsListItem key={bug.id} data={bug} />);
+        }
       }
+      return bugs;
     }
 
     return (
       <div className="bugs-column">
-        <h2>Backlog</h2>
+        <h2>{this.props.filter.name}</h2>
         {showEdit()}
-        <button onClick={this.toggleFilter} className="bugs-column-config"></button>
+        <button onClick={this.toggleEditFilter} className="bugs-column-config"></button>
         <ul className="cards-list">
           {createBugs()}
         </ul>

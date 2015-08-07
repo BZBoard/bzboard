@@ -1,9 +1,13 @@
 import React from 'react';
+import Reflux from 'reflux';
 import BugsList from './BugsList.jsx';
 import Filter from '../models/Filter';
 import FilterActions from '../actions/FilterActions'
+import BugStore from '../stores/BugStore';
 
 export default React.createClass({
+  mixins: [Reflux.connect(BugStore, "bugs")],
+
   propTypes: {
     filters: React.PropTypes.array
   },
@@ -22,8 +26,8 @@ export default React.createClass({
     return (
       <div className="board">
         <button className="add-buglist" onClick={this._addBugList}></button>
-        {filters.map(function(filter) {
-          return <BugsList key={filter.uid} new="true"/>;
+        {filters.map(filter => {
+          return <BugsList key={filter.uid} filter={filter} bugs={this.state.bugs} new="true"/>;
         })}
       </div>
     );

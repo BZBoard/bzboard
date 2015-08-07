@@ -6,4 +6,10 @@ function Filter(name, value) {
   this.value = value;
 }
 
+Filter.fromData = function(data) {
+  let filter = new Filter(data.name, data.value);
+  filter.uid = data.uid;
+  return filter;
+}
+
 export default Filter;

@@ -17,7 +17,7 @@ export default Reflux.createStore({
   onLoad: function () {
     BzBoardClient.getAll().then(rawFilters => {
       for (let rawFilter of Object.values(rawFilters)) {
-        let filter = new Filter(rawFilter.uid, rawFilter.name, rawFilter.value);
+        let filter = Filter.fromData(rawFilter);
         this.filters[filter.uid] = filter;
       }
       this._notifyListeners();
