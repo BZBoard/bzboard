@@ -6,20 +6,12 @@ const BZ_DOMAIN = "https://bugzilla.mozilla.org";
 const REST_BUG  = "/rest/bug";
 
 export default {
-  fetch: function(options) {
-    return this._fetchFromUrl(this._optionsToUrl(options));
+  fetch: function(filter) {
+    return this._fetchFromUrl(this._filterToUrl(filter));
   },
 
-  _optionsToUrl: function(options) {
-    if (!this.bzParams.isWhiteListed(Object.keys(options))) {
-      throw "Invalid Bugzilla parameter.";
-    }
-
-    let url = BZ_DOMAIN + REST_BUG + "?";
-    for (let key of Object.keys(options)) {
-      url += key + "=" + options[key] + "&";
-    }
-    return url.substr(0, url.length-1);
+  _filterToUrl: function (filter) {
+    return BZ_DOMAIN + REST_BUG + "?quicksearch=" + filter.value;
   },
 
   _fetchFromUrl: function(url) {
@@ -47,46 +39,5 @@ export default {
       };
       req.send();
     });
-  },
-
-  _requestResponse: function() {
-    console.log(this.responseText);
-  },
-
-
-  bzParams : {
-    PARAMS_WHITELIST: [
-      "alias",
-      "assigned_to",
-      "component",
-      "creation_time",
-      "creator",
-      "id",
-      "last_change_time",
-      "limit",
-      "offset",
-      "op_sys",
-      "platform",
-      "priority",
-      "product",
-      "resolution",
-      "severity",
-      "status",
-      "summary",
-      "tags",
-      "target_milestone",
-      "qa_contact",
-      "url",
-      "version",
-      "whiteboard",
-      "quicksearch",
-    ],
-
-    isWhiteListed: function(params) {
-      if (!Array.isArray(params)) {
-        params = [params];
-      }
-      return params.every(p => this.PARAMS_WHITELIST.some(w => w == p));
-    },
-  },
+  }
 }
