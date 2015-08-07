@@ -1,5 +1,4 @@
 import Reflux from 'reflux'
-import Uuid from 'uuid'
 import Filter from '../models/Filter'
 import FilterActions from '../actions/FilterActions'
 import BzBoardClient from '../lib/BzBoardClient'
