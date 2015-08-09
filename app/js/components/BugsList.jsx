@@ -58,7 +58,7 @@ export default React.createClass({
 
     return (
       <div className="bugs-column">
-        <h2>{this.props.filter.name}</h2>
+        <h2 contentEditable>{this.props.filter.name}</h2>
         {showEdit()}
         <button onClick={this.toggleEditFilter} className="bugs-column-config"></button>
         <ul className="cards-list">

@@ -11,7 +11,7 @@ export default {
   },
 
   _filterToUrl: function (filter) {
-    return BZ_DOMAIN + REST_BUG + "?quicksearch=" + filter;
+    return BZ_DOMAIN + REST_BUG + "?quicksearch=" + encodeURIComponent(filter);
   },
 
   _fetchFromUrl: function(url) {
