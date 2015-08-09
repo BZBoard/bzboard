@@ -1,4 +1,5 @@
 import React from 'react';
+import { debounce } from 'underscore'
 import BugsListItem from './BugsListItem.jsx';
 import BzClient from '../lib/BzClient.js';
 import FilterActions from '../actions/FilterActions'
@@ -17,6 +18,15 @@ export default React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    let changeFilterValue = () => {
+      let updatedFilter = Object.assign({}, this.props.filter);
+      updatedFilter.value = this.state.newFilterValue;
+      FilterActions.update(updatedFilter);
+    }
+    this.changeFilterValue = debounce(changeFilterValue, 500);
+  },
+
   toggleEditFilter: function() {
     this.setState({
       newFilterValue: this.props.filter.value,
@@ -24,24 +34,16 @@ export default React.createClass({
     });
   },
 
-  changeFilter: function(e) {
-    if (e.keyCode == 13) { //Enter key
-      let updatedFilter = Object.assign({}, this.props.filter);
-      updatedFilter.value = this.state.newFilterValue;
-      FilterActions.update(updatedFilter);
-    }
-  },
-
   onChangeFilterValue: function(e) {
     this.setState({newFilterValue: e.target.value});
+    this.changeFilterValue();
   },
 
   render: function() {
     let showEdit = () => {
       if (this.state.isEditing) {
         return <input value={this.state.newFilterValue}
-                onChange={this.onChangeFilterValue}
-                onKeyDown={this.changeFilter} className="edit-filter" />
+                onChange={this.onChangeFilterValue} className="edit-filter" />
       }
     }
 
