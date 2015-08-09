@@ -17,11 +17,11 @@ export default class extends React.Component {
     }
 
     let renderStatus = () => {
-      if (this.props.data.assigned_to) {
+      /*if (this.props.data.assigned_to) {
         return <div className="bug-status">
         {this.props.data.status} - {this.props.data.assigned_to}
         </div>
-      }
+      }*/
       return <div className="bug-status">
         {this.props.data.status}
       </div>
