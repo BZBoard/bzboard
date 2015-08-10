@@ -39,13 +39,17 @@ export default React.createClass({
     this.changeFilterValue();
   },
 
+  _removeMe: function() {
+    this.props.remove(this.props.filter.uid);
+  },
+
   render: function() {
     let showEdit = () => {
       if (this.state.isEditing) {
         return <div className="edit-filter">
                  <input value={this.state.newFilterValue}
                   onChange={this.onChangeFilterValue} />
-                 <button onClick={this.remove} className="bugs-column-button bugs-column-remove"></button>
+                 <button onClick={this._removeMe} className="bugs-column-button bugs-column-remove"></button>
                </div>
       }
     }

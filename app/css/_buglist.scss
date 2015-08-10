@@ -104,34 +104,44 @@
       clear: both;
       font-size: 0.9em;
       margin: 0;
-      padding:0px 15px 15px;
+      padding:0px 15px 6px;
     }
 
     .bug-change-date {
-      top: 0;
-      position: absolute;
-      right: 5px;
-      line-height: 29px;
-      color: #fff;
+      color: #666;
+      text-align: right;
+      font-size: 0.7em;
     }
 
     .bug-status {
-      min-width: 3rem;
-      padding: 0px 6px;
-      text-align: center;
-      line-height: inherit;
-      position: absolute;
-      right: 15px;
+      background-color: #999999;
+      border-radius: 2px;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-
-      font-size: 0.8rem;
       color: #FFF;
-      background-color: #26A69A;
-      border-radius: 2px;
+      font-size: 0.8rem;
+      line-height: inherit;
+      min-width: 3rem;
+      padding: 0px 6px;
+      position: absolute;
+      right: 45px;
+      text-align: center;
+      top: 11px;
+    }
 
-      right: 15px;
-      top: 15px;
+    .bug-status-assigned {background-color: #F4511E;}
+    .bug-status-new {background-color: #03A9F4;}
+    .bug-status-resolved {background-color: #5e35b1;}
+    .bug-status-verified {background-color: #7cb342;}
+
+    .owner-image {
+      border-radius: 0 2px 0 10px;
+      box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.15);
+      height: 32px;
+      position: absolute;
+      right: 0;
+      width: 32px;
+      top: 0;
     }
   }
 }

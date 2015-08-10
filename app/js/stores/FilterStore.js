@@ -30,7 +30,7 @@ export default Reflux.createStore({
   },
 
   onRemove: function (uid) {
-    delete this.filters[filter.uid];
+    delete this.filters[uid];
     this._notifyListeners();
   },
 

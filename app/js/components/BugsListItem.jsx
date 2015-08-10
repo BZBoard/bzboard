@@ -1,4 +1,7 @@
 import React from 'react';
+import md5 from 'md5';
+
+const GRAVATAR_URL = "http://www.gravatar.com/avatar/";
 
 export default class extends React.Component {
   render() {
@@ -11,18 +14,24 @@ export default class extends React.Component {
     }
 
     let renderDate = () => {
-      return <small className="bug-change-date">
+      return <p className="bug-change-date">
         {new Date(this.props.data.last_change_time).toLocaleString()}
-      </small>
+      </p>
+    }
+
+    let renderAssignee = () => {
+      if (this.props.data.assigned_to) {
+        // Get user image
+        let imgURL = GRAVATAR_URL + md5(this.props.data.assigned_to.trim());
+        imgURL += "?size=64";
+        imgURL += "&d=mm";
+        return <img src={imgURL} title={this.props.data.assigned_to} className="owner-image" />
+      }
     }
 
     let renderStatus = () => {
-      /*if (this.props.data.assigned_to) {
-        return <div className="bug-status">
-        {this.props.data.status} - {this.props.data.assigned_to}
-        </div>
-      }*/
-      return <div className="bug-status">
+      let classes = "bug-status bug-status-" + this.props.data.status.toLowerCase();
+      return <div className={classes}>
         {this.props.data.status}
       </div>
     }
@@ -33,9 +42,10 @@ export default class extends React.Component {
     return (
       <li className={getClass()}>
         <h3><a target="_blank" href={getBugURL()}>Bug {this.props.data.id}</a></h3>
-        {renderDate()}
+        {renderAssignee()}
         {renderStatus()}
         <p>{this.props.data.summary}</p>
+        {renderDate()}
       </li>
     );
   }
