@@ -27,7 +27,7 @@ export default React.createClass({
       <div className="board">
         <button className="add-buglist" title="Add buglist" onClick={this._addBugList}></button>
         {filters.map(filter => {
-          return <BugsList key={filter.uid} filter={filter} bugs={this.state.bugs} new="true"/>;
+          return <BugsList key={filter.uid} filter={filter} bugs={this.state.bugs}/>;
         })}
       </div>
     );

@@ -39,9 +39,12 @@ export default React.createClass({
   render: function() {
     let showEdit = () => {
       if (this.state.isEditing) {
-        return <input value={this.state.newFilterValue}
-                onChange={this.onChangeFilterValue}
-                onKeyDown={this.changeFilter} className="edit-filter" />
+        return <div className="edit-filter">
+                 <input value={this.state.newFilterValue}
+                 onChange={this.onChangeFilterValue}
+                 onKeyDown={this.changeFilter} />
+                 <button onClick={this.remove} className="bugs-column-button bugs-column-remove"></button>
+               </div>
       }
     }
 
@@ -60,7 +63,7 @@ export default React.createClass({
       <div className="bugs-column">
         <h2 contentEditable>{this.props.filter.name}</h2>
         {showEdit()}
-        <button onClick={this.toggleEditFilter} className="bugs-column-config"></button>
+        <button onClick={this.toggleEditFilter} className="bugs-column-button bugs-column-config"></button>
         <ul className="cards-list">
           {createBugs()}
         </ul>
