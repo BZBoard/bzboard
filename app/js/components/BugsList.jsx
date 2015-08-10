@@ -1,9 +1,10 @@
 import React from 'react';
 import Reflux from 'reflux'
+import { INPUT_CHANGE_DELAY } from '../lib/Constants'
 import { debounce } from 'underscore'
 import BugsListItem from './BugsListItem.jsx'
 import BzClient from '../lib/BzClient.js'
-import BugStore from '../stores/BugStore';
+import BugStore from '../stores/BugStore'
 
 export default React.createClass({
   mixins: [Reflux.connectFilter(BugStore, "bugs", function (allBugs) {
@@ -26,7 +27,7 @@ export default React.createClass({
     let changeFilterValue = () => {
       this.props.update(null, this.state.newFilterValue);
     }
-    this.changeFilterValue = debounce(changeFilterValue, 500);
+    this.changeFilterValue = debounce(changeFilterValue, INPUT_CHANGE_DELAY);
   },
 
   toggleEditFilter: function() {
