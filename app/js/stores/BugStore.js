@@ -13,14 +13,14 @@ export default Reflux.createStore({
   },
 
   loadBugs: function (filters) {
-    Promise.all(filters.map(filter => {
-      return BzClient.fetch(filter.value)
+    for (let filter of Object.values(filters)) {
+      BzClient.fetch(filter.value)
         .then(bugs => {
           this.bugs[filter.uid] = bugs;
+        })
+        .then(() => {
+          this.trigger(this.bugs);
         });
-    }))
-    .then(() => {
-      this.trigger(this.bugs);
-    })
+    }
   }
 });

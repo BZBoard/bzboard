@@ -3,36 +3,48 @@ import Reflux from 'reflux';
 import BugsList from './BugsList.jsx';
 import Filter from '../models/Filter';
 import FilterActions from '../actions/FilterActions'
-import BugStore from '../stores/BugStore';
+import FilterStore from '../stores/FilterStore';
 
 export default React.createClass({
-  mixins: [Reflux.connect(BugStore, "bugs")],
-
-  propTypes: {
-    filters: React.PropTypes.array
-  },
+  mixins: [Reflux.connect(FilterStore, "filters")],
 
   componentDidMount: function () {
     FilterActions.load();
   },
 
   _addBugList: function() {
-    FilterActions.create(new Filter('New bug list', ''));
+    let filter = new Filter('New bug list', '');
+    FilterActions.create(filter);
   },
 
-  removeBugList: function(uid) {
+  _updateFilter: function(uid, name, value) {
+    let updatedFilter = Filter.fromData(this.state.filters[uid]);
+    if (name) {
+      updatedFilter.name = name;
+    }
+    if (value) {
+      updatedFilter.value = value;
+    }
+    FilterActions.update(updatedFilter);
+  },
+
+  _removeFilter: function(uid) {
     FilterActions.remove(uid);
   },
 
   render: function() {
-    let filters = this.props.filters;
+
+    let bugLists = [];
+    for (let filter of Object.values(this.state.filters)) {
+      bugLists.push(<BugsList key={filter.uid} filter={filter}
+                              update={this._updateFilter.bind(this, filter.uid)}
+                              remove={this._removeFilter.bind(this, filter.uid)}/>);
+    }
 
     return (
       <div className="board">
         <button className="add-buglist" title="Add buglist" onClick={this._addBugList}></button>
-        {filters.map(filter => {
-          return <BugsList key={filter.uid} remove={this.removeBugList} filter={filter} bugs={this.state.bugs}/>;
-        })}
+        {bugLists}
       </div>
     );
   }

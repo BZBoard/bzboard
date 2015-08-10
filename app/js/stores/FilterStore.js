@@ -40,10 +40,6 @@ export default Reflux.createStore({
   },
 
   _notifyListeners: function () {
-    let filtersArray = [];
-    for (let filter of Object.values(this.filters)) {
-      filtersArray.push(filter);
-    }
-    this.trigger(filtersArray);
+    this.trigger(this.filters);
   }
 });
