@@ -1,14 +1,18 @@
 import React from 'react';
+import Reflux from 'reflux'
+import { INPUT_CHANGE_DELAY } from '../lib/Constants'
 import { debounce } from 'underscore'
-import Filter from '../models/Filter'
 import BugsListItem from './BugsListItem.jsx'
 import BzClient from '../lib/BzClient.js'
-import FilterActions from '../actions/FilterActions'
+import BugStore from '../stores/BugStore'
 
 export default React.createClass({
+  mixins: [Reflux.connectFilter(BugStore, "bugs", function (allBugs) {
+    return allBugs[this.props.filter.uid] || {};
+  })],
+
   propTypes: {
-    filter: React.PropTypes.object,
-    bugs: React.PropTypes.object
+    filter: React.PropTypes.object
   },
 
   getInitialState: function() {
@@ -22,18 +26,14 @@ export default React.createClass({
 
   componentWillMount: function() {
     let changeFilterValue = () => {
-      let updatedFilter = Filter.fromData(this.props.filter);
-      updatedFilter.value = this.state.newFilterValue;
-      FilterActions.update(updatedFilter);
+      this.props.update(null, this.state.newFilterValue);
     }
-    this.changeFilterValue = debounce(changeFilterValue, 500);
+    this.changeFilterValue = debounce(changeFilterValue, INPUT_CHANGE_DELAY);
 
     let changeFilterName = () => {
-      let updatedFilter = Filter.fromData(this.props.filter);
-      updatedFilter.name = this.state.name;
-      FilterActions.update(updatedFilter);
+      this.props.update(this.state.name, null);
     }
-    this.changeFilterName = debounce(changeFilterName, 500);
+    this.changeFilterName = debounce(changeFilterName, INPUT_CHANGE_DELAY);
   },
 
   toggleEditFilter: function() {
@@ -53,30 +53,20 @@ export default React.createClass({
     this.changeFilterName();
   },
 
-  _removeMe: function() {
-    this.props.remove(this.props.filter.uid);
-  },
-
   render: function() {
     let showEdit = () => {
       if (this.state.isEditing) {
         return <div className="edit-filter">
                  <input value={this.state.newFilterValue}
                   onChange={this.onChangeFilterValue} />
-                 <button onClick={this._removeMe} className="bugs-column-button bugs-column-remove"></button>
+                 <button onClick={this.props.remove} className="bugs-column-button bugs-column-remove"></button>
                </div>
       }
     }
 
-    let createBugs = () => {
-      let bugs = [];
-      let filterBugs = this.props.bugs[this.props.filter.uid];
-      if (filterBugs) {
-        for (let bug of Object.values(filterBugs)) {
-          bugs.push(<BugsListItem key={bug.id} data={bug} />);
-        }
-      }
-      return bugs;
+    let bugs = [];
+    for (let bug of Object.values(this.state.bugs)) {
+      bugs.push(<BugsListItem key={bug.id} data={bug} />);
     }
 
     return (
@@ -85,7 +75,7 @@ export default React.createClass({
         {showEdit()}
         <button onClick={this.toggleEditFilter} className="bugs-column-button bugs-column-config"></button>
         <ul className="cards-list">
-          {createBugs()}
+          {bugs}
         </ul>
       </div>
     );
