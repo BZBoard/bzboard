@@ -1,7 +1,8 @@
 import React from 'react';
 import { debounce } from 'underscore'
-import BugsListItem from './BugsListItem.jsx';
-import BzClient from '../lib/BzClient.js';
+import Filter from '../models/Filter'
+import BugsListItem from './BugsListItem.jsx'
+import BzClient from '../lib/BzClient.js'
 import FilterActions from '../actions/FilterActions'
 
 export default React.createClass({
@@ -20,7 +21,7 @@ export default React.createClass({
 
   componentWillMount: function() {
     let changeFilterValue = () => {
-      let updatedFilter = Object.assign({}, this.props.filter);
+      let updatedFilter = Filter.fromData(this.props.filter);
       updatedFilter.value = this.state.newFilterValue;
       FilterActions.update(updatedFilter);
     }
