@@ -35,10 +35,12 @@
     "eventemitter2": "^0.4.14",
     "file-loader": "^0.8.4",
     "mocha": "*",
+    "normalize.scss": "^0.1.0",
     "react": "^0.13.3",
     "reflux": "^0.2.11",
     "sass-loader": "^1.0.3",
     "style-loader": "^0.12.3",
+    "underscore": "^1.8.3",
     "uuid": "^2.0.1",
     "webpack": "^1.10.5",
     "webpack-dev-server": "^1.10.1"
