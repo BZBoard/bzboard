@@ -1,6 +1,12 @@
 @import "normalize";
 @import "variables";
 @import url(http://fonts.googleapis.com/css?family=Fira+Sans:400,500);
+
+* {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 html {
   background-color: $bgColor;
   height: 100%;
@@ -14,7 +20,6 @@ html {
     height: 100%;
   }
 }
-
 
 .bztasks {
   height: 100%;
