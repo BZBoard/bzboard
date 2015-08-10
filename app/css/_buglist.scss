@@ -7,15 +7,15 @@
   padding: 20px;
   position: relative;
 
-  h2 {
+  .buglist-title {
     margin: 0 0 5px;
     text-align: center;
-  }
-
-  h2[contenteditable="true"]:active,
-  h2[contenteditable="true"]:focus {
-    border: none;
-    outline: none;
+    width:100%;
+    background:transparent;
+    font-size: 1.4em;
+    border:none;
+    margin: 0;
+    padding: 0;
   }
 }
 

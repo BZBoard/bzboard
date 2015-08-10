@@ -15,7 +15,8 @@ export default React.createClass({
     let isEditing = this.props.new ? true : false;
     return {
       newFilterValue: this.props.filter.value,
-      isEditing: isEditing
+      isEditing: isEditing,
+      name: this.props.filter.name,
     };
   },
 
@@ -26,6 +27,13 @@ export default React.createClass({
       FilterActions.update(updatedFilter);
     }
     this.changeFilterValue = debounce(changeFilterValue, 500);
+
+    let changeFilterName = () => {
+      let updatedFilter = Filter.fromData(this.props.filter);
+      updatedFilter.name = this.state.name;
+      FilterActions.update(updatedFilter);
+    }
+    this.changeFilterName = debounce(changeFilterName, 500);
   },
 
   toggleEditFilter: function() {
@@ -38,6 +46,11 @@ export default React.createClass({
   onChangeFilterValue: function(e) {
     this.setState({newFilterValue: e.target.value});
     this.changeFilterValue();
+  },
+
+  onChangeFilterName: function(e) {
+    this.setState({name: e.target.value});
+    this.changeFilterName();
   },
 
   _removeMe: function() {
@@ -68,7 +81,7 @@ export default React.createClass({
 
     return (
       <div className="bugs-column">
-        <h2 contentEditable>{this.props.filter.name}</h2>
+        <input className="buglist-title" value={this.state.name} onChange={this.onChangeFilterName} />
         {showEdit()}
         <button onClick={this.toggleEditFilter} className="bugs-column-button bugs-column-config"></button>
         <ul className="cards-list">
