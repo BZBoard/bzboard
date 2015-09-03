@@ -1,27 +1,37 @@
-const FILTER_STORAGE = 'filters.storage';
+const PREFIX = "bzboard.";
+const FILTER_STORAGE = PREFIX + "filters";
+const BUGZILLA_CREDS_STORAGE = PREFIX + "bugzilla.credentials";
 
-function _get() {
-  let filters = localStorage.getItem(FILTER_STORAGE);
-  if (!filters) {
+function _get(key, defaultValue = {}) {
+  let data = localStorage.getItem(FILTER_STORAGE);
+  if (!data) {
     return {};
   }
-  return JSON.parse(filters);
+  return JSON.parse(data);
 }
 
-function _set(filters) {
-  localStorage.setItem(FILTER_STORAGE, JSON.stringify(filters));
+function _set(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 export default {
 
+  getBugzillaCredentials() {
+    return _get(BUGZILLA_CREDS_STORAGE, null);
+  },
+
+  setBugzillaCredentials(creds) {
+    return _set(BUGZILLA_CREDS_STORAGE, creds);
+  },
+
   getAll() {
-    return Promise.resolve(_get());
+    return Promise.resolve(_get(FILTER_STORAGE));
   },
 
   addFilter(filter) {
-    let filters = _get();
+    let filters = _get(FILTER_STORAGE);
     filters[filter.uid] = filter;
-    _set(filters);
+    _set(FILTER_STORAGE, filters);
   },
 
   updateFilter(filter) {
@@ -29,8 +39,8 @@ export default {
   },
 
   removeFilter(uid) {
-    let filters = _get();
+    let filters = _get(FILTER_STORAGE);
     delete filters[uid];
-    _set(filters);
+    _set(FILTER_STORAGE, filters);
   }
 };
