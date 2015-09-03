@@ -5,7 +5,7 @@ import {
   FILTER_UPDATE, FILTER_REMOVE
 } from '../actions';
 
-function filters (state =  { }, action) {
+function filters (state = { }, action) {
   switch (action.type) {
   case FILTER_CREATE:
     BzBoardClient.addFilter(action.filter);
