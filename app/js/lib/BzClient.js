@@ -7,6 +7,9 @@ const REST_BUG  = "/rest/bug";
 
 export default {
   fetch: function(filter) {
+    if(!filter) {
+      return Promise.resolve([]);
+    }
     return this._fetchFromUrl(this._filterToUrl(filter));
   },
 

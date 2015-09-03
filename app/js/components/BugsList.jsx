@@ -1,18 +1,13 @@
 import React from 'react';
-import Reflux from 'reflux'
 import { INPUT_CHANGE_DELAY } from '../lib/Constants'
 import { debounce } from 'underscore'
 import BugsListItem from './BugsListItem.jsx'
-import BzClient from '../lib/BzClient.js'
-import BugStore from '../stores/BugStore'
 
 export default React.createClass({
-  mixins: [Reflux.connectFilter(BugStore, "bugs", function (allBugs) {
-    return allBugs[this.props.filter.uid] || {};
-  })],
 
   propTypes: {
-    filter: React.PropTypes.object
+    filter: React.PropTypes.object,
+    bugs: React.PropTypes.object
   },
 
   getInitialState: function() {
@@ -43,6 +38,7 @@ export default React.createClass({
   },
 
   render: function() {
+    const { filter, bugs } = this.props;
     let showEdit = () => {
       if (this.state.isEditing) {
         return <div className="edit-filter">
@@ -53,18 +49,18 @@ export default React.createClass({
       }
     }
 
-    let bugs = [];
-    for (let bug of Object.values(this.state.bugs)) {
-      bugs.push(<BugsListItem key={bug.id} data={bug} />);
+    let bugsItems = [];
+    for (let bug of bugs) {
+      bugsItems.push(<BugsListItem key={bug.id} data={bug} />);
     }
 
     return (
       <div className="bugs-column">
-        <h2 contentEditable>{this.props.filter.name}</h2>
+        <h2 contentEditable>{filter.name}</h2>
         {showEdit()}
         <button onClick={this.toggleEditFilter} className="bugs-column-button bugs-column-config"></button>
         <ul className="cards-list">
-          {bugs}
+          {bugsItems}
         </ul>
       </div>
     );
