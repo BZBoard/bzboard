@@ -6,6 +6,7 @@ export const BUGS_UPDATE   = 'BUGS_UPDATE';
 export const FILTER_CREATE = 'FILTER_CREATE';
 export const FILTER_UPDATE = 'FILTER_UPDATE';
 export const FILTER_REMOVE = 'FILTER_REMOVE';
+export const LABEL_BUG     = 'LABEL_BUG';
 
 export function getFilters () {
   return dispatch => {
@@ -16,6 +17,14 @@ export function getFilters () {
           dispatch(createFilter(filter));
         }
       });
+  };
+}
+
+export function changeBugLabel (bugId, newLabel) {
+  return {
+    type: LABEL_BUG,
+    bugId,
+    newLabel
   };
 }
 

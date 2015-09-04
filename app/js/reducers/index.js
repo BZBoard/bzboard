@@ -1,49 +1,67 @@
 import BzBoardClient from '../lib/BzBoardClient'
+import Immutable from 'immutable';
 import { combineReducers } from 'redux';
 import {
   BUGS_UPDATE, FILTER_CREATE,
-  FILTER_UPDATE, FILTER_REMOVE
+  FILTER_UPDATE, FILTER_REMOVE,
+  LABEL_BUG
 } from '../actions';
 
-function filters (state = { }, action) {
+/* State Structure:
+{
+  bugs: Map({
+    1: {
+      id: 1,
+      ...
+      label: labelId, // Mutable
+      filter: filterId
+    }
+  }),
+  filters: Map({
+    1: {
+      id: 1,
+      ...
+    }
+  })
+}
+*/
+
+function bugFromJson (hash, action) {
+  // TODO: no need to keep the whole bug object, it's really huge
+  let bug = Object.assign({}, hash);
+  bug.filter = action.filter.uid;
+  let label = /\[(fxsync)\]/.exec(hash.whiteboard);
+  bug.label = label ? label[1] : null;
+  return bug;
+}
+
+function bugs (state = Immutable.Map(), action) {
   switch (action.type) {
-  case FILTER_CREATE:
-    BzBoardClient.addFilter(action.filter);
-  case FILTER_UPDATE: {
-    BzBoardClient.updateFilter(action.filter);
-    let filter = {};
-    filter[action.filter.uid] = action.filter;
-    return Object.assign({}, state, filter);
-  }
-  case FILTER_REMOVE: {
-    BzBoardClient.removeFilter(action.uid);
-    let newState = Object.assign({}, state);
-    delete newState[action.uid];
-    return newState;
-  }
+  case FILTER_UPDATE:
+  case FILTER_REMOVE:
+    return state.filter(bug => bug.filter !== action.filter.uid);
+  case BUGS_UPDATE:
+    return state.merge(Immutable.Map(action.bugs.reduce((obj, bug) => {
+      bug = bugFromJson(bug, action);
+      obj[bug.id] = bug;
+      return obj;
+  }, {})));
   default:
     return state;
   }
 }
 
-function bugsByFilter (state = { }, action) {
+function filters (state = Immutable.Map(), action) {
   switch (action.type) {
   case FILTER_CREATE:
-  case FILTER_UPDATE: {
-    let filterBugs = {};
-    filterBugs[action.filter.uid] = [];
-    return Object.assign({}, state, filterBugs);
-  }
-  case FILTER_REMOVE: {
-    let newState = Object.assign({}, state);
-    delete newState[action.uid];
-    return newState;
-  }
-  case BUGS_UPDATE: {
-    let filterBugs = {};
-    filterBugs[action.filter.uid] = action.bugs;
-    return Object.assign({}, state, filterBugs);
-  }
+    BzBoardClient.addFilter(action.filter);
+    return state.set(action.filter.uid, action.filter);
+  case FILTER_UPDATE:
+    BzBoardClient.updateFilter(action.filter);
+    return state.set(action.filter.uid, action.filter);
+  case FILTER_REMOVE:
+    BzBoardClient.removeFilter(action.filter.uid);
+    return state.delete(action.filter.uid);
   default:
     return state;
   }
@@ -51,7 +69,7 @@ function bugsByFilter (state = { }, action) {
 
 const rootReducer = combineReducers({
   filters,
-  bugsByFilter
+  bugs
 });
 
 export default rootReducer;

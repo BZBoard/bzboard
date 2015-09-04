@@ -7,7 +7,7 @@ export default React.createClass({
     bugs: React.PropTypes.array
   },
 
-  render: function() {
+  render: function () {
     const { bugs } = this.props;
 
     let bugsItems = [];

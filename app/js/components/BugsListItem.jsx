@@ -1,10 +1,43 @@
 import React from 'react';
+import { DragSource } from 'react-dnd';
 import md5 from 'md5';
+import { draggableTypes } from '../lib/Constants';
+import { changeBugLabel } from '../actions';
 
 const GRAVATAR_URL = "http://www.gravatar.com/avatar/";
 
-export default class extends React.Component {
+const bugSource = {
+  // isDragging(props, monitor) {
+  //   return monitor.getItem().id === props.id;
+  // },
+
+  beginDrag(props, monitor, component) {
+    // Return the data describing the dragged item
+    const item = { id: props.data.id };
+    return item;
+  },
+
+  endDrag(props, monitor, component) {
+    if (!monitor.didDrop()) {
+      return;
+    }
+    const item = monitor.getItem();
+    const dropResult = monitor.getDropResult();
+    changeBugLabel(item.id, dropResult.name);
+  }
+};
+
+function collect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource()
+  };
+}
+
+let BugListItem = class extends React.Component {
   render() {
+
+    const { connectDragSource } = this.props;
+
     let getClass = () => {
       let className = "";
       if (!this.props.data.is_open) {
@@ -39,7 +72,7 @@ export default class extends React.Component {
     let getBugURL = () =>
       "https://bugzilla.mozilla.org/show_bug.cgi?id=" + this.props.data.id;
 
-    return (
+    return connectDragSource(
       <li className={getClass()}>
         <h3><a target="_blank" href={getBugURL()}>Bug {this.props.data.id}</a></h3>
         {renderAssignee()}
@@ -50,3 +83,5 @@ export default class extends React.Component {
     );
   }
 };
+
+export default DragSource(draggableTypes.BUG, bugSource, collect)(BugListItem);

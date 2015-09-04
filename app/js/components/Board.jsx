@@ -20,7 +20,7 @@ let Board = React.createClass({
 
   _updateFilter: function(uid, name, value) {
     const { filters, dispatch } = this.props;
-    let updatedFilter = Filter.fromData(filters[uid]);
+    let updatedFilter = Filter.fromData(filters.get(uid));
     if (name) {
       updatedFilter.name = name;
     }
@@ -75,40 +75,33 @@ function newLabelColum(labelName) {
   };
 }
 
-function toColumns(filters, bugsByFilter) {
-  // TODO : find better unique keys for the map / symbols
-  let columns = new Map();
-  for (let filter of Object.values(filters)) {
+function toColumns(filters, bugs) {
+  let filterColumns = new Map();
+  let labelColumns = new Map();
+  for (let filter of filters.values()) {
     let col = newFilterColumn(filter);
-    columns.set(filter.uid, col);
+    filterColumns.set(filter.uid, col);
   }
 
-  for (let uid of Object.keys(bugsByFilter)) {
-    for (let bug of bugsByFilter[uid]) {
-      let bugsList;
-      let label = /\[(fxsync)\]/.exec(bug.whiteboard);
-      if (label) {
-        label = label[1];
-        if (!columns.has(label)) {
-          let col = newLabelColum(label);
-          columns.set(label, col);
-        }
-        bugsList = columns.get(label).bugs;
+  for (let bug of bugs.values()) {
+    if (!bug.label) {
+      filterColumns.get(bug.filter).bugs.push(bug);
+    } else {
+      if (!labelColumns.has(bug.label)) {
+        labelColumns.set(bug.label, newLabelColum(bug.label));
       }
-      else {
-        bugsList = columns.get(uid).bugs;
-      }
-      bugsList.push(bug);
+      labelColumns.get(bug.label).bugs.push(bug);
     }
   }
-  return columns.values();
+
+  return [...filterColumns.values()].concat([...labelColumns.values()]);
 }
 
 function mapStoreStateToProps(state) {
-  const { filters, bugsByFilter } = state;
+  const { filters, bugs } = state;
   return {
     filters,
-    columns: toColumns(filters, bugsByFilter)
+    columns: toColumns(filters, bugs)
   };
 }
 
