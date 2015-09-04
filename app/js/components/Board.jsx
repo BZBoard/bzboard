@@ -97,7 +97,9 @@ function toColumns(filters, bugs) {
 
   for (let bug of bugs.values()) {
     if (!bug.label) {
-      filterColumns.get(bug.filter).bugs.push(bug);
+      for (let filter of bug.filters) {
+        filterColumns.get(filter).bugs.push(bug);
+      }
     } else {
       if (!labelColumns.has(bug.label)) {
         labelColumns.set(bug.label, newLabelColum(bug.label));
