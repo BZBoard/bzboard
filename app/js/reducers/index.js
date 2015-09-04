@@ -13,8 +13,8 @@ import {
     1: {
       id: 1,
       ...
-      label: labelId, // Mutable
-      filter: filterId
+      label: labelName, // Mutable
+      filters: [1, 2]
     }
   }),
   filters: Map({
