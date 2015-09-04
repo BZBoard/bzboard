@@ -71,8 +71,8 @@ function filters (state = Immutable.Map(), action) {
     BzBoardClient.updateFilter(action.filter);
     return state.set(action.filter.uid, action.filter);
   case FILTER_REMOVE:
-    BzBoardClient.removeFilter(action.filter.uid);
-    return state.delete(action.filter.uid);
+    BzBoardClient.removeFilter(action.uid);
+    return state.delete(action.uid);
   default:
     return state;
   }
