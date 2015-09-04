@@ -30,7 +30,7 @@ function bugFromJson (hash, action) {
   // TODO: no need to keep the whole bug object, it's really huge
   let bug = Object.assign({}, hash);
   bug.filters = new Set([action.filter.uid]);
-  let label = /\[(fxsync)\]/.exec(hash.whiteboard);
+  let label = /\[(.+?)\]/.exec(hash.whiteboard);
   bug.label = label ? label[1] : null;
   return bug;
 }
