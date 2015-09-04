@@ -46,6 +46,8 @@ function bugs (state = Immutable.Map(), action) {
       obj[bug.id] = bug;
       return obj;
   }, {})));
+  case LABEL_BUG:
+    state.get(action.bugId).label = action.newLabel;
   default:
     return state;
   }

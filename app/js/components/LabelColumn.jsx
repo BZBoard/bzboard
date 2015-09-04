@@ -32,17 +32,17 @@ function collect (connect, monitor) {
 let labelColumn = React.createClass({
   propTypes: {
     name: React.PropTypes.string,
-    bugs: React.PropTypes.array
+    bugs: React.PropTypes.array,
+    changeBugLabel: React.PropTypes.func
   },
 
   render: function() {
-    const { name, bugs } = this.props;
-    const { connectDropTarget } = this.props;
+    const { name, bugs, changeBugLabel, connectDropTarget } = this.props;
 
     return connectDropTarget(
       <div className="bugs-column">
         <input className="buglist-title" disabled="true" defaultValue={name} />
-        <BugsList bugs={bugs} />
+        <BugsList bugs={bugs} changeBugLabel={changeBugLabel} />
       </div>
     );
   }

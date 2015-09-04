@@ -7,7 +7,8 @@ export default React.createClass({
 
   propTypes: {
     filter: React.PropTypes.object,
-    bugs: React.PropTypes.array
+    bugs: React.PropTypes.array,
+    changeBugLabel: React.PropTypes.func
   },
 
   getInitialState: function() {
@@ -49,7 +50,7 @@ export default React.createClass({
   },
 
   render: function() {
-    const { filter, bugs } = this.props;
+    const { filter, bugs, changeBugLabel } = this.props;
     let showEdit = () => {
       if (this.state.isEditing) {
         return <div className="edit-filter">
@@ -65,7 +66,7 @@ export default React.createClass({
         <input className="buglist-title" value={this.state.newFilterName} onChange={this.onChangeFilterName} />
         {showEdit()}
         <button onClick={this.toggleEditFilter} className="bugs-column-button bugs-column-config"></button>
-        <BugsList bugs={bugs} />
+        <BugsList bugs={bugs} changeBugLabel={changeBugLabel} />
       </div>
     );
   }

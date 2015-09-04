@@ -4,15 +4,16 @@ import BugsListItem from './BugsListItem.jsx'
 export default React.createClass({
 
   propTypes: {
-    bugs: React.PropTypes.array
+    bugs: React.PropTypes.array,
+    changeBugLabel: React.PropTypes.func
   },
 
   render: function () {
-    const { bugs } = this.props;
+    const { bugs, changeBugLabel } = this.props;
 
     let bugsItems = [];
     for (let bug of bugs) {
-      bugsItems.push(<BugsListItem key={bug.id} data={bug} />);
+      bugsItems.push(<BugsListItem key={bug.id} data={bug} changeBugLabel={changeBugLabel} />);
     }
 
     return (

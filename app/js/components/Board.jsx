@@ -1,11 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getFilters, createFilter, updateFilter, removeFilter } from '../actions';
+import { getFilters, createFilter, updateFilter, removeFilter, changeBugLabel } from '../actions';
 import FilterColumn from './FilterColumn.jsx';
 import LabelColumn from './LabelColumn.jsx';
 import Filter from '../models/Filter';
 
 let Board = React.createClass({
+
+  propTypes: {
+    filters: React.PropTypes.object,
+    bugs: React.PropTypes.object
+  },
 
   componentDidMount: function() {
     const { dispatch } = this.props;
@@ -35,6 +40,11 @@ let Board = React.createClass({
     dispatch(removeFilter(uid));
   },
 
+  _changeBugLabel: function(bugId, newLabel) {
+    const { dispatch } = this.props;
+    dispatch(changeBugLabel(bugId, newLabel));
+  },
+
   render: function() {
     const { columns } = this.props;
     let cols = [];
@@ -42,9 +52,11 @@ let Board = React.createClass({
       if (column.type === "filter") {
         cols.push(<FilterColumn key={column.id} filter={column.filter} bugs={column.bugs}
                                 update={this._updateFilter.bind(this, column.filter.uid)}
-                                remove={this._removeFilter.bind(this, column.filter.uid)}/>);
+                                remove={this._removeFilter.bind(this, column.filter.uid)}
+                                changeBugLabel={this._changeBugLabel}/>);
       } else {
-        cols.push(<LabelColumn key={column.id} name={column.name} bugs={column.bugs}/>);
+        cols.push(<LabelColumn key={column.id} name={column.name} bugs={column.bugs}
+                               changeBugLabel={this._changeBugLabel}/>);
       }
     }
 

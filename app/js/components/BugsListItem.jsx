@@ -2,7 +2,6 @@ import React from 'react';
 import { DragSource } from 'react-dnd';
 import md5 from 'md5';
 import { draggableTypes } from '../lib/Constants';
-import { changeBugLabel } from '../actions';
 
 const GRAVATAR_URL = "http://www.gravatar.com/avatar/";
 
@@ -18,6 +17,7 @@ const bugSource = {
   },
 
   endDrag(props, monitor, component) {
+    const { changeBugLabel } = props;
     if (!monitor.didDrop()) {
       return;
     }
@@ -33,9 +33,13 @@ function collect(connect, monitor) {
   };
 }
 
-let BugListItem = class extends React.Component {
-  render() {
+let BugListItem = React.createClass({
+  propTypes: {
+    data: React.PropTypes.object,
+    changeBugLabel: React.PropTypes.func
+  },
 
+  render() {
     const { connectDragSource } = this.props;
 
     let getClass = () => {
@@ -82,6 +86,6 @@ let BugListItem = class extends React.Component {
       </li>
     );
   }
-};
+});
 
 export default DragSource(draggableTypes.BUG, bugSource, collect)(BugListItem);

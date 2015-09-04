@@ -23,7 +23,7 @@ export function getFilters () {
 export function changeBugLabel (bugId, newLabel) {
   return {
     type: LABEL_BUG,
-    bugId,
+    bugId: bugId + "",
     newLabel
   };
 }
