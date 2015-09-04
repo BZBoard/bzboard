@@ -40,7 +40,7 @@ function bugs (state = Immutable.Map(), action) {
   case FILTER_UPDATE:
   case FILTER_REMOVE:
     return Immutable.Map(state.reduce((obj, bug) => {
-      bug.filters.remove(action.filter.uid);
+      bug.filters.delete(action.filter.uid);
       if(bug.filters.size > 0) {
         obj[bug.id] = bug;
       }
