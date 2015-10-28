@@ -14,15 +14,16 @@ export default {
     return this._fetchFromUrl(url);
   },
 
-  searchBugs: function(filter) {
+  searchBugs: function(filter, excludeIds) {
     if(!filter) {
       return Promise.resolve([]);
     }
-    return this._fetchFromUrl(this._filterToUrl(filter));
-  },
-
-  _filterToUrl: function (filter) {
-    return BZ_DOMAIN + REST_BUG + "?quicksearch=" + encodeURIComponent(filter);
+    if (!Array.isArray(excludeIds)) {
+      excludeIds = [excludeIds];
+    }
+    let url = BZ_DOMAIN + REST_BUG + "?quicksearch=" + encodeURIComponent(filter)
+              + "&bug_id=" + excludeIds.join(",") + "&bug_id_type=nowords";
+    return this._fetchFromUrl(url);
   },
 
   _fetchFromUrl: function(url) {
