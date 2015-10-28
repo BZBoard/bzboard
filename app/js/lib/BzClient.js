@@ -6,7 +6,15 @@ const BZ_DOMAIN = "https://bugzilla.mozilla.org";
 const REST_BUG  = "/rest/bug";
 
 export default {
-  fetch: function(filter) {
+  getBugs: function(bugIds) {
+    if (!Array.isArray(bugIds)) {
+      bugIds = [bugIds];
+    }
+    let url = BZ_DOMAIN + REST_BUG + "?id=" + bugIds.join(",");
+    return this._fetchFromUrl(url);
+  },
+
+  searchBugs: function(filter) {
     if(!filter) {
       return Promise.resolve([]);
     }

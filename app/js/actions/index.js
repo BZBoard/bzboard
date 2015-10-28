@@ -42,7 +42,7 @@ export function createFilter (filter) {
       type: FILTER_CREATE,
       filter
     });
-    BzClient.fetch(filter.value)
+    BzClient.searchBugs(filter.value)
       .then(bugs => dispatch(updateFilterBugs(filter, bugs)));
   };
 }
@@ -54,7 +54,7 @@ export function updateFilter (filter) {
       filter
     });
     // TODO : check if filter.value changed, maybe no need to refetch
-    BzClient.fetch(filter.value)
+    BzClient.searchBugs(filter.value)
       .then(bugs => dispatch(updateFilterBugs(filter, bugs)));
   };
 }
