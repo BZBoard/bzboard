@@ -21,8 +21,9 @@ export default {
     if (!Array.isArray(excludeIds)) {
       excludeIds = [excludeIds];
     }
-    let url = BZ_DOMAIN + REST_BUG + "?quicksearch=" + encodeURIComponent(filter)
-              + "&bug_id=" + excludeIds.join(",") + "&bug_id_type=nowords";
+    let url = BZ_DOMAIN + REST_BUG + "?query_format=advanced&quicksearch="
+              + encodeURIComponent(filter) + "&f0=bug_id&o0=anyexact&v0="
+              + excludeIds.join(",");
     return this._fetchFromUrl(url);
   },
 
