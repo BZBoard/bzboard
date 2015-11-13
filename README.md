@@ -23,4 +23,4 @@ Development
 1. Clone the project.
 2. `npm install`
 3. `npm dev run`
-4. Navigate to http://localhost:8080/webpack-dev-server/
+4. Navigate to [http://localhost:8080/webpack-dev-server/](http://localhost:8080/webpack-dev-server/)
