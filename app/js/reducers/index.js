@@ -4,7 +4,8 @@ import { combineReducers } from 'redux';
 import {
   BUGS_UPDATE, FILTER_CREATE,
   FILTER_UPDATE, FILTER_REMOVE,
-  LABEL_BUG
+  LABEL_CREATE, LABEL_UPDATE,
+  LABEL_REMOVE, LABEL_BUG
 } from '../actions';
 
 /* State Structure:
@@ -30,8 +31,8 @@ function bugFromJson (hash, action) {
   // TODO: no need to keep the whole bug object, it's really huge
   let bug = Object.assign({}, hash);
   bug.filters = new Set([action.filter.uid]);
-  let label = /\[(.+?)\]/.exec(hash.whiteboard);
-  bug.label = label ? label[1] : null;
+  //let label = /\[(.+?)\]/.exec(hash.whiteboard);
+  //bug.label = label ? label[1] : null;
   return bug;
 }
 
@@ -78,8 +79,25 @@ function filters (state = Immutable.Map(), action) {
   }
 }
 
+function labels (state = Immutable.Map(), action) {
+  switch (action.type) {
+  case LABEL_CREATE:
+    BzBoardClient.addLabel(action.label);
+    return state.set(action.label.uid, action.label);
+  case LABEL_UPDATE:
+    BzBoardClient.updateLabel(action.label);
+    return state.set(action.label.uid, action.label);
+  case LABEL_REMOVE:
+    BzBoardClient.removeLabel(action.uid);
+    return state.delete(action.uid);
+  default:
+    return state;
+  }
+}
+
 const rootReducer = combineReducers({
   filters,
+  labels,
   bugs
 });
 
