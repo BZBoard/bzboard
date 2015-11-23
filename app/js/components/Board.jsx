@@ -1,26 +1,45 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getFilters, createFilter, updateFilter, removeFilter, changeBugLabel } from '../actions';
+import { getFilters, createFilter, updateFilter, removeFilter,
+         getLabels, createLabel, updateLabel, removeLabel,
+         changeBugLabel } from '../actions';
 import FilterColumn from './FilterColumn.jsx';
 import LabelColumn from './LabelColumn.jsx';
 import Filter from '../models/Filter';
+import Label from '../models/Label';
 
 let Board = React.createClass({
 
   propTypes: {
     filters: React.PropTypes.object,
-    bugs: React.PropTypes.object
+    label: React.PropTypes.object,
+    bugs: React.PropTypes.object,
   },
 
   componentDidMount: function() {
     const { dispatch } = this.props;
     dispatch(getFilters());
+    dispatch(getLabels());
   },
 
   _addBugList: function() {
     const { dispatch } = this.props;
-    let filter = new Filter('New bug list', '');
-    dispatch(createFilter(filter));
+    let label = new Label("New bug list");
+    dispatch(createLabel(label));
+  },
+
+  _updateLabel: function(uid, name) {
+    const { labels, dispatch } = this.props;
+    let updatedLabel = Label.fromData(labels.get(uid));
+    if (name) {
+      updatedLabel.name = name;
+    }
+    dispatch(updateLabel(updatedLabel));
+  },
+
+  _removeLabel: function(uid) {
+    const { dispatch } = this.props;
+    dispatch(removeLabel(uid));
   },
 
   _updateFilter: function(uid, name, value) {
@@ -55,7 +74,9 @@ let Board = React.createClass({
                                 remove={this._removeFilter.bind(this, column.filter.uid)}
                                 changeBugLabel={this._changeBugLabel}/>);
       } else {
-        cols.push(<LabelColumn key={column.id} name={column.name} bugs={column.bugs}
+        cols.push(<LabelColumn key={column.id} label={column.label} bugs={column.bugs}
+                               update={this._updateLabel.bind(this, column.label.uid)}
+                               remove={this._removeLabel.bind(this, column.label.uid)}
                                changeBugLabel={this._changeBugLabel}/>);
       }
     }
@@ -78,16 +99,16 @@ function newFilterColumn(filter) {
   };
 }
 
-function newLabelColumn(labelName) {
+function newLabelColumn(label) {
   return {
-    id: "label-" + labelName,
-    name: labelName,
+    id: "label-" + label.uid,
     type: "label",
+    label,
     bugs: []
   };
 }
 
-function toColumns(filters, bugs) {
+function toColumns(filters, labels, bugs) {
   let filterColumns = new Map();
   let labelColumns = new Map();
   for (let filter of filters.values()) {
@@ -95,6 +116,11 @@ function toColumns(filters, bugs) {
     filterColumns.set(filter.uid, col);
   }
 
+  for (let label of labels.values()) {
+    let col = newLabelColumn(label);
+    labelColumns.set(label.uid, col);
+  }
+/*
   for (let bug of bugs.values()) {
     if (!bug.label) {
       for (let filter of bug.filters) {
@@ -107,15 +133,16 @@ function toColumns(filters, bugs) {
       labelColumns.get(bug.label).bugs.push(bug);
     }
   }
-
+*/
   return [...filterColumns.values()].concat([...labelColumns.values()]);
 }
 
 function mapStoreStateToProps(state) {
-  const { filters, bugs } = state;
+  const { filters, labels, bugs } = state;
   return {
     filters,
-    columns: toColumns(filters, bugs)
+    labels,
+    columns: toColumns(filters, labels, bugs)
   };
 }
 

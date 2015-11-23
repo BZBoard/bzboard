@@ -1,6 +1,8 @@
 import React from 'react';
 import BugsList from './BugsList.jsx'
 import { DropTarget } from 'react-dnd';
+import { INPUT_CHANGE_DELAY } from '../lib/Constants';
+import { debounce } from 'underscore';
 import { draggableTypes } from '../lib/Constants';
 
 const columnTarget = {
@@ -31,17 +33,36 @@ function collect (connect, monitor) {
 
 let labelColumn = React.createClass({
   propTypes: {
-    name: React.PropTypes.string,
+    label: React.PropTypes.object,
     bugs: React.PropTypes.array,
     changeBugLabel: React.PropTypes.func
   },
 
+  getInitialState: function() {
+    return {
+      newLabelName: this.props.label.name,
+    };
+  },
+
+  componentWillMount: function() {
+    let changeLabelName = () => {
+      this.props.update(this.state.newLabelName, null);
+    }
+    this.changeLabelName = debounce(changeLabelName, INPUT_CHANGE_DELAY);
+  },
+
+  onChangeLabelName: function(e) {
+    this.setState({newLabelName: e.target.value});
+    this.changeLabelName();
+  },
+
   render: function() {
-    const { name, bugs, changeBugLabel, connectDropTarget } = this.props;
+    const { label, bugs, changeBugLabel, connectDropTarget } = this.props;
 
     return connectDropTarget(
       <div className="bugs-column">
-        <input className="buglist-title" disabled="true" defaultValue={name} />
+        <input className="buglist-title" value={this.state.newLabelName} onChange={this.onChangeLabelName} />
+        <button onClick={this.props.remove} className="bugs-column-button bugs-column-remove"></button>
         <BugsList bugs={bugs} changeBugLabel={changeBugLabel} />
       </div>
     );
