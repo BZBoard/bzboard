@@ -1,7 +1,7 @@
 import Uuid from 'uuid'
 
 function Label (name, bugs = null) {
-  //this.uid = Uuid.v1();
+  this.uid = Uuid.v1();
   this.name = name;
   if(bugs && typeof bugs === "object") {
     if (bugs.constructor.name == "Set") {
