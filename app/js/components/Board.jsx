@@ -78,7 +78,7 @@ function newFilterColumn(filter) {
   };
 }
 
-function newLabelColum(labelName) {
+function newLabelColumn(labelName) {
   return {
     id: "label-" + labelName,
     name: labelName,
@@ -102,7 +102,7 @@ function toColumns(filters, bugs) {
       }
     } else {
       if (!labelColumns.has(bug.label)) {
-        labelColumns.set(bug.label, newLabelColum(bug.label));
+        labelColumns.set(bug.label, newLabelColumn(bug.label));
       }
       labelColumns.get(bug.label).bugs.push(bug);
     }
