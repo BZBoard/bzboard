@@ -93,10 +93,12 @@ export function createLabel (label) {
 }
 
 export function updateLabel (label) {
-  dispatch({
-    type: FILTER_UPDATE,
-    filter
-  });
+  return dispatch => {
+    dispatch({
+      type: LABEL_UPDATE,
+      label
+    });
+  };
 }
 
 export function removeLabel (uid) {

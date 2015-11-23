@@ -56,7 +56,7 @@ export default {
   },
 
   updateLabel(label) {
-    this.updateLabel(label);
+    this.addLabel(label);
   },
 
   removeLabel(uid) {
