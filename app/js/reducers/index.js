@@ -1,5 +1,6 @@
 import BzBoardClient from '../lib/BzBoardClient'
 import Immutable from 'immutable';
+import Filter from '../models/Filter'
 import { combineReducers } from 'redux';
 import {
   BUGS_UPDATE, FILTER_CREATE,
@@ -63,17 +64,11 @@ function bugs (state = Immutable.Map(), action) {
   }
 }
 
-function filters (state = Immutable.Map(), action) {
+function filter (state = new Filter('New Filter',''), action) {
   switch (action.type) {
-  case FILTER_CREATE:
-    BzBoardClient.addFilter(action.filter);
-    return state.set(action.filter.uid, action.filter);
   case FILTER_UPDATE:
     BzBoardClient.updateFilter(action.filter);
-    return state.set(action.filter.uid, action.filter);
-  case FILTER_REMOVE:
-    BzBoardClient.removeFilter(action.uid);
-    return state.delete(action.uid);
+    return action.filter;
   default:
     return state;
   }
@@ -96,7 +91,7 @@ function labels (state = Immutable.Map(), action) {
 }
 
 const rootReducer = combineReducers({
-  filters,
+  filter,
   labels,
   bugs
 });

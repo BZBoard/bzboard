@@ -1,5 +1,5 @@
 const PREFIX = "bzboard.";
-const FILTER_STORAGE = PREFIX + "filters";
+const FILTER_STORAGE = PREFIX + "filter";
 const LABELS_STORAGE = PREFIX + "labels";
 const BUGZILLA_CREDS_STORAGE = PREFIX + "bugzilla.credentials";
 
@@ -25,7 +25,7 @@ export default {
     return _set(BUGZILLA_CREDS_STORAGE, creds);
   },
 
-  getAllFilters() {
+  getFilter() {
     return Promise.resolve(_get(FILTER_STORAGE));
   },
 
@@ -33,20 +33,8 @@ export default {
     return Promise.resolve(_get(LABELS_STORAGE));
   },
 
-  addFilter(filter) {
-    let filters = _get(FILTER_STORAGE);
-    filters[filter.uid] = filter;
-    _set(FILTER_STORAGE, filters);
-  },
-
   updateFilter(filter) {
-    this.addFilter(filter);
-  },
-
-  removeFilter(uid) {
-    let filters = _get(FILTER_STORAGE);
-    delete filters[uid];
-    _set(FILTER_STORAGE, filters);
+    _set(FILTER_STORAGE, filter);
   },
 
   addLabel(label) {

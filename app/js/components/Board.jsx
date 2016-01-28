@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getFilters, createFilter, updateFilter, removeFilter,
+import { getFilter, createFilter, updateFilter,
          getLabels, createLabel, updateLabel, removeLabel,
          changeBugLabel } from '../actions';
 import FilterColumn from './FilterColumn.jsx';
@@ -11,14 +11,14 @@ import Label from '../models/Label';
 let Board = React.createClass({
 
   propTypes: {
-    filters: React.PropTypes.object,
+    filter: React.PropTypes.object,
     label: React.PropTypes.object,
     bugs: React.PropTypes.object,
   },
 
   componentDidMount: function() {
     const { dispatch } = this.props;
-    dispatch(getFilters());
+    dispatch(getFilter());
     dispatch(getLabels());
   },
 
@@ -43,20 +43,14 @@ let Board = React.createClass({
   },
 
   _updateFilter: function(uid, name, value) {
-    const { filters, dispatch } = this.props;
-    let updatedFilter = Filter.fromData(filters.get(uid));
+    const { filter, dispatch } = this.props;
     if (name) {
-      updatedFilter.name = name;
+      filter.name = name;
     }
     if (value) {
-      updatedFilter.value = value;
+      filter.value = value;
     }
-    dispatch(updateFilter(updatedFilter));
-  },
-
-  _removeFilter: function(uid) {
-    const { dispatch } = this.props;
-    dispatch(removeFilter(uid));
+    dispatch(updateFilter(filter));
   },
 
   _changeBugLabel: function(bugId, newLabel) {
@@ -65,25 +59,21 @@ let Board = React.createClass({
   },
 
   render: function() {
-    const { columns } = this.props;
+    const { filter, columns } = this.props;
     let cols = [];
     for (let column of columns) {
-      if (column.type === "filter") {
-        cols.push(<FilterColumn key={column.id} filter={column.filter} bugs={column.bugs}
-                                update={this._updateFilter.bind(this, column.filter.uid)}
-                                remove={this._removeFilter.bind(this, column.filter.uid)}
-                                changeBugLabel={this._changeBugLabel}/>);
-      } else {
-        cols.push(<LabelColumn key={column.id} label={column.label} bugs={column.bugs}
-                               update={this._updateLabel.bind(this, column.label.uid)}
-                               remove={this._removeLabel.bind(this, column.label.uid)}
-                               changeBugLabel={this._changeBugLabel}/>);
-      }
+      cols.push(<LabelColumn key={column.id} label={column.label} bugs={column.bugs}
+                             update={this._updateLabel.bind(this, column.label.uid)}
+                             remove={this._removeLabel.bind(this, column.label.uid)}
+                             changeBugLabel={this._changeBugLabel}/>);
     }
 
     return (
       <div className="board">
         <button className="add-buglist" title="Add buglist" onClick={this._addBugList}></button>
+        <FilterColumn key={filter.id} filter={filter} bugs={filter.bugs}
+                      update={this._updateFilter.bind(this, filter.uid)}
+                      changeBugLabel={this._changeBugLabel}/>
         {cols}
       </div>
     );
@@ -108,14 +98,13 @@ function newLabelColumn(label) {
   };
 }
 
-function toColumns(filters, labels, bugs) {
-  let filterColumns = new Map();
-  let labelColumns = new Map();
+function toColumns(filter, labels, bugs) {
+  let labelColumns = new Map();/*
   for (let filter of filters.values()) {
     let col = newFilterColumn(filter);
     filterColumns.set(filter.uid, col);
   }
-
+*/
   for (let label of labels.values()) {
     let col = newLabelColumn(label);
     labelColumns.set(label.uid, col);
@@ -134,15 +123,15 @@ function toColumns(filters, labels, bugs) {
     }
   }
 */
-  return [...filterColumns.values()].concat([...labelColumns.values()]);
+  return [...labelColumns.values()];
 }
 
 function mapStoreStateToProps(state) {
-  const { filters, labels, bugs } = state;
+  const { filter, labels, bugs } = state;
   return {
-    filters,
+    filter,
     labels,
-    columns: toColumns(filters, labels, bugs)
+    columns: toColumns(filter, labels, bugs)
   };
 }
 

@@ -4,22 +4,18 @@ import Filter from '../models/Filter';
 import Label from '../models/Label';
 
 export const BUGS_UPDATE   = 'BUGS_UPDATE';
-export const FILTER_CREATE = 'FILTER_CREATE';
 export const FILTER_UPDATE = 'FILTER_UPDATE';
-export const FILTER_REMOVE = 'FILTER_REMOVE';
 export const LABEL_BUG     = 'LABEL_BUG';
 export const LABEL_CREATE  = 'LABEL_CREATE';
 export const LABEL_UPDATE  = 'LABEL_UPDATE';
 export const LABEL_REMOVE  = 'LABEL_REMOVE';
 
-export function getFilters () {
+export function getFilter () {
   return dispatch => {
-    BzBoardClient.getAllFilters()
-      .then(rawFilters => {
-        for (let rawFilter of Object.values(rawFilters)) {
-          let filter = Filter.fromData(rawFilter);
-          dispatch(createFilter(filter));
-        }
+    BzBoardClient.getFilter()
+      .then(rawFilter => {
+        let filter = Filter.fromData(rawFilter);
+        dispatch(updateFilter(filter));
       });
   };
 }
@@ -53,17 +49,6 @@ function updateFilterBugs (filter, bugs) {
   };
 }
 
-export function createFilter (filter) {
-  return dispatch => {
-    dispatch({
-      type: FILTER_CREATE,
-      filter
-    });
-    BzClient.searchBugs(filter.value)
-      .then(bugs => dispatch(updateFilterBugs(filter, bugs)));
-  };
-}
-
 export function updateFilter (filter) {
   return dispatch => {
     dispatch({
@@ -73,13 +58,6 @@ export function updateFilter (filter) {
     // TODO : check if filter.value changed, maybe no need to refetch
     BzClient.searchBugs(filter.value)
       .then(bugs => dispatch(updateFilterBugs(filter, bugs)));
-  };
-}
-
-export function removeFilter (uid) {
-  return {
-    type: FILTER_REMOVE,
-    uid
   };
 }
 

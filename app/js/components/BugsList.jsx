@@ -12,8 +12,10 @@ export default React.createClass({
     const { bugs, changeBugLabel } = this.props;
 
     let bugsItems = [];
-    for (let bug of bugs) {
-      bugsItems.push(<BugsListItem key={bug.id} data={bug} changeBugLabel={changeBugLabel} />);
+    if(bugs) {
+      for (let bug of bugs) {
+        bugsItems.push(<BugsListItem key={bug.id} data={bug} changeBugLabel={changeBugLabel} />);
+      }
     }
 
     return (
