@@ -11,7 +11,7 @@ const columnTarget = {
       return;
     }
 
-    return { name: props.name }
+    return { label: props.label.name };
   }
 };
 
@@ -40,7 +40,7 @@ let labelColumn = React.createClass({
 
   getInitialState: function() {
     return {
-      newLabelName: this.props.label.name,
+      newLabelName: this.props.label.value,
     };
   },
 

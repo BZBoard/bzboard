@@ -1,22 +1,79 @@
 import BzBoardClient from '../lib/BzBoardClient'
 import BzClient from '../lib/BzClient'
-import Filter from '../models/Filter';
-import Label from '../models/Label';
 
+export const FILTER_INIT = 'FILTER_INIT';
+export const FILTER_UPDATE_VALUE = 'FILTER_UPDATE_VALUE';
+export const FILTER_UPDATE_NAME  = 'FILTER_UPDATE_NAME';
+export const BUGS_REPLACE  = 'BUGS_REPLACE';
 export const BUGS_UPDATE   = 'BUGS_UPDATE';
-export const FILTER_UPDATE = 'FILTER_UPDATE';
 export const LABEL_BUG     = 'LABEL_BUG';
+export const LABEL_ADD    = 'LABEL_ADD';
 export const LABEL_CREATE  = 'LABEL_CREATE';
 export const LABEL_UPDATE  = 'LABEL_UPDATE';
 export const LABEL_REMOVE  = 'LABEL_REMOVE';
 
-export function getFilter () {
+export function loadFilter() {
   return dispatch => {
-    BzBoardClient.getFilter()
-      .then(rawFilter => {
-        let filter = Filter.fromData(rawFilter);
-        dispatch(updateFilter(filter));
-      });
+    BzBoardClient.loadFilter()
+      .then(filter => {
+        dispatch({
+          type: FILTER_INIT,
+          filter
+        });
+        dispatch(loadBugs(filter.value));
+      })
+  };
+}
+
+export function updateFilterName(newName) {
+  return dispatch => {
+    dispatch({
+      type: FILTER_UPDATE_NAME,
+      newName
+    });
+  };
+}
+
+export function updateFilterValue(newValue) {
+  return dispatch => {
+    dispatch({
+      type: FILTER_UPDATE_VALUE,
+      newValue
+    });
+    dispatch(loadBugs(newValue));
+  };
+}
+
+export function loadBugs(searchString) {
+  return dispatch => {
+    BzClient.searchBugs(searchString)
+      .then(bugs => dispatch(replaceAllBugs(bugs)));
+  };
+}
+
+
+export function updateBugWhiteboard (bugId, whiteboard) {
+  return dispatch => {
+    BzClient.updateBugWhiteboard(bugId, whiteboard)
+      .then(res => {
+        let changedId = res.bugs.map(bug => bug.id);
+        return BzClient.getBugs([changedId]);
+      })
+      .then(bugs => dispatch(updateBugs(bugs)));
+  };
+}
+
+function updateBugs(bugs) {
+  return {
+    type: BUGS_UPDATE,
+    bugs
+  };
+}
+
+function replaceAllBugs (bugs) {
+  return {
+    type: BUGS_REPLACE,
+    bugs
   };
 }
 
@@ -24,41 +81,20 @@ export function getLabels () {
   return dispatch => {
     BzBoardClient.getAllLabels()
       .then(rawLabels => {
-        for (let rawLabel of Object.values(rawLabels)) {
-          let label = Label.fromData(rawLabel);
-          dispatch(createLabel(label));
+        for (let label of Object.values(rawLabels)) {
+          dispatch(addLabel(label));
         }
       });
   };
 }
 
-
-export function changeBugLabel (bugId, newLabel) {
-  return {
-    type: LABEL_BUG,
-    bugId: bugId + "",
-    newLabel
-  };
-}
-
-function updateFilterBugs (filter, bugs) {
-  return {
-    type: BUGS_UPDATE,
-    bugs,
-    filter
-  };
-}
-
-export function updateFilter (filter) {
+function addLabel (label) {
   return dispatch => {
     dispatch({
-      type: FILTER_UPDATE,
-      filter
+      type: LABEL_ADD,
+      label
     });
-    // TODO : check if filter.value changed, maybe no need to refetch
-    BzClient.searchBugs(filter.value)
-      .then(bugs => dispatch(updateFilterBugs(filter, bugs)));
-  };
+  }
 }
 
 export function createLabel (label) {
@@ -79,9 +115,9 @@ export function updateLabel (label) {
   };
 }
 
-export function removeLabel (uid) {
+export function removeLabel (id) {
   return {
     type: LABEL_REMOVE,
-    uid
+    id
   };
 }

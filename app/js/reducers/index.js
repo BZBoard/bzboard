@@ -1,11 +1,11 @@
 import BzBoardClient from '../lib/BzBoardClient'
 import Immutable from 'immutable';
-import Filter from '../models/Filter'
+import uuid from 'uuid'
 import { combineReducers } from 'redux';
 import {
-  BUGS_UPDATE, FILTER_CREATE,
-  FILTER_UPDATE, FILTER_REMOVE,
-  LABEL_CREATE, LABEL_UPDATE,
+  BUGS_REPLACE, BUGS_UPDATE,
+  FILTER_INIT, FILTER_UPDATE_NAME, FILTER_UPDATE_VALUE,
+  LABEL_ADD, LABEL_CREATE, LABEL_UPDATE,
   LABEL_REMOVE, LABEL_BUG
 } from '../actions';
 
@@ -15,76 +15,88 @@ import {
     1: {
       id: 1,
       ...
-      label: labelName, // Mutable
-      filters: [1, 2]
     }
-  }),
-  filters: Map({
+  }), // Not persisted
+  labels: Map({
     1: {
       id: 1,
-      ...
+      name: "My label"
     }
   })
 }
 */
 
-function bugFromJson (hash, action) {
+function _bugFromJson(hash) {
   // TODO: no need to keep the whole bug object, it's really huge
   let bug = Object.assign({}, hash);
-  bug.filters = new Set([action.filter.uid]);
-  //let label = /\[(.+?)\]/.exec(hash.whiteboard);
-  //bug.label = label ? label[1] : null;
   return bug;
 }
 
-function bugs (state = Immutable.Map(), action) {
-  switch (action.type) {
-  case FILTER_UPDATE:
-  case FILTER_REMOVE:
-    return Immutable.Map(state.reduce((obj, bug) => {
-      bug.filters.delete(action.filter.uid);
-      if(bug.filters.size > 0) {
-        obj[bug.id] = bug;
+function _bugsKeyValueIterator(bugs) {
+  let i = 0;
+  return {
+    next: function () {
+      if (i == bugs.length) {
+        return {done: true};
       }
-      return obj;
-    }, {}));
+      let bug = bugs[i++];
+      return {value: [bug.id, _bugFromJson(bug)], done: false};
+    }
+  };
+}
+
+function bugs(state = Immutable.Map(), action) {
+  const { bugs } = action;
+  switch (action.type) {
+  case BUGS_REPLACE:
+    return Immutable.Map(Immutable.Iterable(_bugsKeyValueIterator(bugs)));
   case BUGS_UPDATE:
-    return state.mergeWith((a, b) => {
-      a.filters = new Set([...a.filters, ...b.filters]);
-      return a;
-    }, Immutable.Map(action.bugs.reduce((obj, bug) => {
-        bug = bugFromJson(bug, action);
-        obj[bug.id] = bug;
-        return obj;
-    }, {})));
-  case LABEL_BUG:
-    state.get(action.bugId).label = action.newLabel;
+    return state.merge(Immutable.Iterable(_bugsKeyValueIterator(bugs)));
   default:
     return state;
   }
 }
 
-function filter (state = new Filter('New Filter',''), action) {
+function filter(state = { name: "New Filter", value: "" }, action) {
   switch (action.type) {
-  case FILTER_UPDATE:
-    BzBoardClient.updateFilter(action.filter);
-    return action.filter;
+  case FILTER_INIT:
+    return { name: action.filter.name, value: action.filter.value };
+  case FILTER_UPDATE_NAME: {
+    let updatedProps = { name: action.newName };
+    BzBoardClient.updateFilter(updatedProps);
+    return Object.assign({}, state, updatedProps);
+  }
+  case FILTER_UPDATE_VALUE: {
+    let updatedProps = { value: action.newValue };
+    BzBoardClient.updateFilter(updatedProps);
+    return Object.assign({}, state, updatedProps);
+  }
   default:
     return state;
   }
 }
 
-function labels (state = Immutable.Map(), action) {
+function labels(state = Immutable.Map(), action) {
   switch (action.type) {
-  case LABEL_CREATE:
-    BzBoardClient.addLabel(action.label);
-    return state.set(action.label.uid, action.label);
-  case LABEL_UPDATE:
-    BzBoardClient.updateLabel(action.label);
-    return state.set(action.label.uid, action.label);
+  case LABEL_ADD: {
+    let { label } = action;
+    return state.set(label.id, label);
+  }
+  case LABEL_CREATE: {
+    let id = uuid.v4();
+    let label = { id, value: action.label.value };
+    BzBoardClient.updateLabel(label);
+    return state.set(id, label);
+  }
+  case LABEL_UPDATE: {
+    let id = action.label.id;
+    let updatedProps = { id, value: action.label.value };
+    BzBoardClient.updateLabel(updatedProps);
+    return state.update(id, label => Object.assign({}, label, { value: updatedProps.value }));
+  }
   case LABEL_REMOVE:
-    BzBoardClient.removeLabel(action.uid);
-    return state.delete(action.uid);
+    BzBoardClient.removeLabel(action.id);
+    return state.delete(action.id);
   default:
     return state;
   }

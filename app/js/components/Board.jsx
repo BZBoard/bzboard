@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getFilter, createFilter, updateFilter,
+import { loadFilter, createFilter,
+         updateFilterValue, updateFilterName,
          getLabels, createLabel, updateLabel, removeLabel,
-         changeBugLabel } from '../actions';
+         updateBugWhiteboard } from '../actions';
 import FilterColumn from './FilterColumn.jsx';
 import LabelColumn from './LabelColumn.jsx';
-import Filter from '../models/Filter';
-import Label from '../models/Label';
+
+const COLUMN_KEY_FILTER = "column_filter";
 
 let Board = React.createClass({
 
@@ -18,121 +19,98 @@ let Board = React.createClass({
 
   componentDidMount: function() {
     const { dispatch } = this.props;
-    dispatch(getFilter());
+    dispatch(loadFilter());
     dispatch(getLabels());
   },
 
   _addBugList: function() {
     const { dispatch } = this.props;
-    let label = new Label("New bug list");
+    let label = { value: "[WhiteboardTag]" };
     dispatch(createLabel(label));
   },
 
-  _updateLabel: function(uid, name) {
+  _updateLabel: function(id, value) {
     const { labels, dispatch } = this.props;
-    let updatedLabel = Label.fromData(labels.get(uid));
-    if (name) {
-      updatedLabel.name = name;
-    }
-    dispatch(updateLabel(updatedLabel));
+    let label = { id, value };
+    dispatch(updateLabel(label));
   },
 
-  _removeLabel: function(uid) {
+  _removeLabel: function(id) {
     const { dispatch } = this.props;
-    dispatch(removeLabel(uid));
+    dispatch(removeLabel(id));
   },
 
-  _updateFilter: function(uid, name, value) {
-    const { filter, dispatch } = this.props;
-    if (name) {
-      filter.name = name;
-    }
-    if (value) {
-      filter.value = value;
-    }
-    dispatch(updateFilter(filter));
+  _updateFilterValue: function(value) {
+    const { dispatch } = this.props;
+    dispatch(updateFilterValue(value));
+  },
+
+  _updateFilterName: function(name) {
+    const { dispatch } = this.props;
+    dispatch(updateFilterName(name));
   },
 
   _changeBugLabel: function(bugId, newLabel) {
-    const { dispatch } = this.props;
-    dispatch(changeBugLabel(bugId, newLabel));
+    const { bugs, labels, dispatch } = this.props;
+    let bug = bugs.get(bugId);
+    let allLabelsNames = labels.toArray().map(label => label.name);
+    let newWhiteboard = bug.whiteboard || "";
+    // Clear tracked labels
+    allLabelsNames.forEach(label => {
+      if (newWhiteboard.includes(label)) {
+        newWhiteboard = newWhiteboard.replace(label, "");
+      }
+    })
+    // Assign a new one
+    if (newLabel) {
+      newWhiteboard += newLabel;
+    }
+    dispatch(updateBugWhiteboard(bug.id, newWhiteboard));
   },
 
   render: function() {
-    const { filter, columns } = this.props;
-    let cols = [];
-    for (let column of columns) {
-      cols.push(<LabelColumn key={column.id} label={column.label} bugs={column.bugs}
-                             update={this._updateLabel.bind(this, column.label.uid)}
-                             remove={this._removeLabel.bind(this, column.label.uid)}
+    const { filter, labels, columns } = this.props;
+    let labelColumns = [];
+    for (let [id, label] of labels) {
+      labelColumns.push(<LabelColumn key={id} label={label} bugs={columns.get(id)}
+                             update={this._updateLabel.bind(this, id)}
+                             remove={this._removeLabel.bind(this, id)}
                              changeBugLabel={this._changeBugLabel}/>);
     }
 
     return (
       <div className="board">
         <button className="add-buglist" title="Add buglist" onClick={this._addBugList}></button>
-        <FilterColumn key={filter.id} filter={filter} bugs={filter.bugs}
-                      update={this._updateFilter.bind(this, filter.uid)}
+        <FilterColumn key={COLUMN_KEY_FILTER} filter={filter} bugs={columns.get(COLUMN_KEY_FILTER)}
+                      updateFilterValue={this._updateFilterValue} updateFilterName={this._updateFilterName}
                       changeBugLabel={this._changeBugLabel}/>
-        {cols}
+        {labelColumns}
       </div>
     );
   }
 });
 
-function newFilterColumn(filter) {
-  return {
-    id: "filter-" + filter.uid,
-    type: "filter",
-    filter,
-    bugs: []
-  };
+function sortBugsInColumns(bugs, labels) {
+  let columns = new Map();
+  columns.set(COLUMN_KEY_FILTER, []);
+  labels.forEach(label => columns.set(label.id, []));
+
+  bugs.forEach(bug => {
+    let label = labels.find(label => bug.whiteboard.includes(label.name)); // TODO : not optimized at all
+    let key = !label ? COLUMN_KEY_FILTER : label.id;
+    columns.get(key).push(bug);
+  });
+  return columns;
 }
 
-function newLabelColumn(label) {
-  return {
-    id: "label-" + label.uid,
-    type: "label",
-    label,
-    bugs: []
-  };
-}
-
-function toColumns(filter, labels, bugs) {
-  let labelColumns = new Map();/*
-  for (let filter of filters.values()) {
-    let col = newFilterColumn(filter);
-    filterColumns.set(filter.uid, col);
-  }
-*/
-  for (let label of labels.values()) {
-    let col = newLabelColumn(label);
-    labelColumns.set(label.uid, col);
-  }
-/*
-  for (let bug of bugs.values()) {
-    if (!bug.label) {
-      for (let filter of bug.filters) {
-        filterColumns.get(filter).bugs.push(bug);
-      }
-    } else {
-      if (!labelColumns.has(bug.label)) {
-        labelColumns.set(bug.label, newLabelColumn(bug.label));
-      }
-      labelColumns.get(bug.label).bugs.push(bug);
-    }
-  }
-*/
-  return [...labelColumns.values()];
-}
-
-function mapStoreStateToProps(state) {
+function mapStateToProps(state) {
   const { filter, labels, bugs } = state;
   return {
     filter,
     labels,
-    columns: toColumns(filter, labels, bugs)
+    bugs,
+    columns: sortBugsInColumns(bugs.toArray(), labels.toArray())
   };
 }
 
-export default connect(mapStoreStateToProps)(Board);
+export default connect(mapStateToProps)(Board);

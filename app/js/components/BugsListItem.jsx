@@ -12,7 +12,7 @@ const bugSource = {
 
   beginDrag(props, monitor, component) {
     // Return the data describing the dragged item
-    const item = { id: props.data.id };
+    const item = { bugId: props.data.id };
     return item;
   },
 
@@ -23,7 +23,7 @@ const bugSource = {
     }
     const item = monitor.getItem();
     const dropResult = monitor.getDropResult();
-    changeBugLabel(item.id, dropResult.name);
+    changeBugLabel(item.bugId, dropResult.label);
   }
 };
 

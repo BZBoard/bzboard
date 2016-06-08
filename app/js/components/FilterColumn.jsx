@@ -1,10 +1,37 @@
 import React from 'react';
+import BugsList from './BugsList.jsx'
+import { DropTarget } from 'react-dnd';
 import { INPUT_CHANGE_DELAY } from '../lib/Constants'
 import { debounce } from 'underscore'
-import BugsList from './BugsList.jsx'
+import { draggableTypes } from '../lib/Constants';
 
-export default React.createClass({
+const columnTarget = {
+  drop(props, monitor, component) {
+    if (monitor.didDrop()) {
+      return;
+    }
 
+    return { label: null };
+  }
+};
+
+/**
+ * Specifies which props to inject into your component.
+ */
+function collect (connect, monitor) {
+  return {
+    // Call this function inside render()
+    // to let React DnD handle the drag events:
+    connectDropTarget: connect.dropTarget(),
+    // You can ask the monitor about the current drag state:
+    isOver: monitor.isOver(),
+    isOverCurrent: monitor.isOver({ shallow: true }),
+    canDrop: monitor.canDrop(),
+    itemType: monitor.getItemType()
+  };
+}
+
+let filterColumn = React.createClass({
   propTypes: {
     filter: React.PropTypes.object,
     bugs: React.PropTypes.array,
@@ -22,12 +49,12 @@ export default React.createClass({
 
   componentWillMount: function() {
     let changeFilterValue = () => {
-      this.props.update(null, this.state.newFilterValue);
+      this.props.updateFilterValue(this.state.newFilterValue);
     }
     this.changeFilterValue = debounce(changeFilterValue, INPUT_CHANGE_DELAY);
 
     let changeFilterName = () => {
-      this.props.update(this.state.newFilterName, null);
+      this.props.updateFilterName(this.state.newFilterName);
     }
     this.changeFilterName = debounce(changeFilterName, INPUT_CHANGE_DELAY);
   },
@@ -50,7 +77,7 @@ export default React.createClass({
   },
 
   render: function() {
-    const { filter, bugs, changeBugLabel } = this.props;
+    const { filter, bugs, changeBugLabel, connectDropTarget } = this.props;
     let showEdit = () => {
       if (this.state.isEditing) {
         return <div className="edit-filter">
@@ -61,7 +88,7 @@ export default React.createClass({
       }
     }
 
-    return (
+    return connectDropTarget(
       <div className="bugs-column">
         <input className="buglist-title" value={this.state.newFilterName} onChange={this.onChangeFilterName} />
         {showEdit()}
@@ -71,3 +98,5 @@ export default React.createClass({
     );
   }
 });
+
+export default DropTarget(draggableTypes.BUG, columnTarget, collect)(filterColumn);

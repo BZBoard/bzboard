@@ -12,7 +12,7 @@ export default React.createClass({
     const { bugs, changeBugLabel } = this.props;
 
     let bugsItems = [];
-    if(bugs) {
+    if (bugs) {
       for (let bug of bugs) {
         bugsItems.push(<BugsListItem key={bug.id} data={bug} changeBugLabel={changeBugLabel} />);
       }
