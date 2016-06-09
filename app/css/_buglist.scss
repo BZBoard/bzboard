@@ -1,70 +1,76 @@
 .bugs-column {
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid #ccc;
   border-left: 1px solid #f8f8f8;
-  flex-grow:1;
-  max-width: 50%;
-  min-width: 250px;
+  width: 275px;
   padding: 20px;
-  position: relative;
+  flex-shrink: 0;
 
-  .buglist-title {
-    background:transparent;
-    border:none;
+  & > .bugs-column-header-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.bugs-column-header {
+  display: flex;
+
+  & .buglist-title {
+    background: transparent;
+    border: none;
     color: #333;
     font-weight: bold;
     font-size: 1.4em;
     margin: 0;
     padding: 0;
+    padding-top: 2px; // Compensate weird input vertical align
     text-align: center;
-    width:100%;
+    min-width: 0; // Since it's an input
   }
 }
 
-.edit-filter {
+
+.filter-config-button {
+  background: transparent url('../images/config.svg');
+  background-size: cover;
+
+  &:hover {
+    opacity: 0.25;
+    transform: rotate(-90deg);
+  }
+}
+
+.filter-edit {
+  display: flex;
   background: #FFFFFF;
   border: none;
   border-radius: 2px;
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 5px 0px rgba(0, 0, 0, 0.12);
   padding: 12px 0px;
-  position: relative;
   transition: box-shadow 0.25s ease 0s;
 
   input {
+    flex: 1;
     border: 0;
     margin: 0;
-    padding: 0 45px 0 12px;
-    width: 100%;
+    padding: 0 5px;
+    min-width: 0;
   }
 }
 
 .bugs-column-button {
   border: none;
-  border-radius: 50%;
-  height: 1.5em;
-  opacity:0.15;
+  height: 32px;
+  opacity: 0.15;
   padding: 0;
-  position: absolute;
-  top: 20px;
-  transition:all 0.2s ease;
-  width: 1.5em;
-}
-
-.bugs-column-config {
-  background: transparent url('../images/config.svg');
-  background-size: 1.5em;
-  right: 20px;
-
-  &:hover {
-    opacity:0.25;
-    transform: rotate(-90deg);
-  }
+  min-width: 32px;
+  transition: all 0.2s ease;
 }
 
 .bugs-column-remove {
   background: transparent url('../images/remove.svg');
-  background-size: 1.5em;
-  right: 13px;
-  top: 13px;
+  background-size: cover;
 
   &:hover {
     opacity:0.25;
@@ -72,12 +78,13 @@
   }
 }
 
-.cards-list {
+.bugs-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  overflow: auto;
 
-  & > li {
+  & > .bug {
     background: $cardBg;
     box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.15);
     margin: 10px 0;
@@ -85,36 +92,37 @@
     border-radius: 2px;
     box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 5px 0px rgba(0, 0, 0, 0.12);
 
-    &.closed-bug {
+    &.closed {
       //opacity: 0.5;
     }
 
-    & > h3 {
-      font-size: 1.2em;
+    & > .bug-title {
+      font-size: 1.1em;
       font-weight: normal;
       margin: 0px;
       padding: 15px 15px 0;
 
-      a {
+      .bug-link {
         color: inherit;
         text-decoration: none;
       }
     }
 
-    p {
+    & > .bug-summary {
       clear: both;
-      font-size: 0.9em;
+      font-size: 0.85em;
       margin: 0;
       padding:0px 15px 6px;
     }
 
-    .bug-change-date {
+    & > .bug-last-change-date {
       color: #666;
       text-align: right;
       font-size: 0.7em;
+      padding-right: 5px;
     }
 
-    .bug-status {
+    & > .bug-status {
       background-color: #999999;
       border-radius: 2px;
       -moz-box-sizing: border-box;
@@ -128,14 +136,14 @@
       right: 45px;
       text-align: center;
       top: 0px;
+
+      &.assigned {background-color: #F4511E;}
+      &.new      {background-color: #03A9F4;}
+      &.resolved {background-color: #5e35b1;}
+      &.verified {background-color: #7cb342;}
     }
 
-    .bug-status-assigned {background-color: #F4511E;}
-    .bug-status-new {background-color: #03A9F4;}
-    .bug-status-resolved {background-color: #5e35b1;}
-    .bug-status-verified {background-color: #7cb342;}
-
-    .owner-image {
+    & > .bug-assignee-picture {
       border-radius: 0 2px 0 10px;
       box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.15);
       height: 32px;

@@ -10,11 +10,9 @@ const store = configureStore();
 let BzBoard = React.createClass({
   render() {
     return (
-      <div className="bztasks">
+      <div className="bzboard">
         <h1>BZ Board</h1>
-        <div className="board-wrapper">
-          <Board store={store}/>
-        </div>
+        <Board store={store}/>
       </div>
     );
   }

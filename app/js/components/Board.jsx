@@ -23,7 +23,7 @@ let Board = React.createClass({
     dispatch(getLabels());
   },
 
-  _addBugList: function() {
+  _addLabel: function() {
     const { dispatch } = this.props;
     let label = { value: "[WhiteboardTag]" };
     dispatch(createLabel(label));
@@ -87,7 +87,7 @@ let Board = React.createClass({
 
     return (
       <div className="board">
-        <button className="add-buglist" title="Add buglist" onClick={this._addBugList}></button>
+        <button className="add-label" title="Add label" onClick={this._addLabel}></button>
         <FilterColumn key={COLUMN_KEY_FILTER} filter={filter} bugs={columns.get(COLUMN_KEY_FILTER)}
                       updateFilterValue={this._updateFilterValue} updateFilterName={this._updateFilterName}
                       changeBugLabel={this._changeBugLabel}/>

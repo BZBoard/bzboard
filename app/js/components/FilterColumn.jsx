@@ -66,6 +66,13 @@ let filterColumn = React.createClass({
     });
   },
 
+  clearFilterValue: function() {
+    this.setState({
+      newFilterValue: ""
+    });
+    this.changeFilterValue();
+  },
+
   onChangeFilterValue: function(e) {
     this.setState({newFilterValue: e.target.value});
     this.changeFilterValue();
@@ -80,18 +87,21 @@ let filterColumn = React.createClass({
     const { filter, bugs, changeBugLabel, connectDropTarget } = this.props;
     let showEdit = () => {
       if (this.state.isEditing) {
-        return <div className="edit-filter">
+        return <div className="filter-edit">
                  <input value={this.state.newFilterValue} onChange={this.onChangeFilterValue} />
-                 <button onClick={this.props.remove} className="bugs-column-button bugs-column-remove"></button>
                </div>
       }
     }
 
     return connectDropTarget(
       <div className="bugs-column">
-        <input className="buglist-title" value={this.state.newFilterName} onChange={this.onChangeFilterName} />
-        {showEdit()}
-        <button onClick={this.toggleEditFilter} className="bugs-column-button bugs-column-config"></button>
+        <div className="bugs-column-header-wrapper">
+          <div className="bugs-column-header">
+            <input className="buglist-title" value={this.state.newFilterName} onChange={this.onChangeFilterName} />
+            <button onClick={this.toggleEditFilter} className="bugs-column-button filter-config-button"></button>
+          </div>
+          {showEdit()}
+        </div>
         <BugsList bugs={bugs} changeBugLabel={changeBugLabel} />
       </div>
     );

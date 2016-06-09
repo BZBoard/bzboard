@@ -19,7 +19,7 @@ export default React.createClass({
     }
 
     return (
-      <ul className="cards-list">
+      <ul className="bugs-list">
         {bugsItems}
       </ul>
     );

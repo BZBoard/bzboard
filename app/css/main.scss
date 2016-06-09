@@ -21,11 +21,10 @@ html {
   }
 }
 
-.bztasks {
+.bzboard {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 
   h1 {
     background: $headerBg;
@@ -36,24 +35,15 @@ html {
     width: 100%;
   }
 
-  .board-wrapper {
-    align-items: center;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  }
-
   .board {
-    align-self: center;
     display: flex;
-    flex-grow: 1;
-    margin: auto;
-    width: 100%;
+    flex-wrap: nowrap;
+    flex: 1;
     overflow: auto;
   }
 }
 
-.add-buglist {
+.add-label {
   background: transparent url('../images/add.svg') no-repeat center left;
   background-size: 2em;
   border: none;

@@ -43,15 +43,15 @@ let BugListItem = React.createClass({
     const { connectDragSource } = this.props;
 
     let getClass = () => {
-      let className = "";
+      let className = "bug";
       if (!this.props.data.is_open) {
-        className += "closed-bug";
+        className += "closed";
       }
       return className;
     }
 
     let renderDate = () => {
-      return <p className="bug-change-date">
+      return <p className="bug-last-change-date">
         {new Date(this.props.data.last_change_time).toLocaleString()}
       </p>
     }
@@ -62,12 +62,12 @@ let BugListItem = React.createClass({
         let imgURL = GRAVATAR_URL + md5(this.props.data.assigned_to.trim());
         imgURL += "?size=64";
         imgURL += "&d=mm";
-        return <img src={imgURL} title={this.props.data.assigned_to} className="owner-image" />
+        return <img src={imgURL} title={this.props.data.assigned_to} className="bug-assignee-picture" />
       }
     }
 
     let renderStatus = () => {
-      let classes = "bug-status bug-status-" + this.props.data.status.toLowerCase();
+      let classes = "bug-status " + this.props.data.status.toLowerCase();
       return <div className={classes}>
         {this.props.data.status}
       </div>
@@ -78,10 +78,10 @@ let BugListItem = React.createClass({
 
     return connectDragSource(
       <li className={getClass()}>
-        <h3><a target="_blank" href={getBugURL()}>Bug {this.props.data.id}</a></h3>
+        <h3 className="bug-title"><a className="bug-link" target="_blank" href={getBugURL()}>Bug {this.props.data.id}</a></h3>
         {renderAssignee()}
         {renderStatus()}
-        <p>{this.props.data.summary}</p>
+        <p className="bug-summary">{this.props.data.summary}</p>
         {renderDate()}
       </li>
     );

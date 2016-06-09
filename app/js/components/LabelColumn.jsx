@@ -61,8 +61,10 @@ let labelColumn = React.createClass({
 
     return connectDropTarget(
       <div className="bugs-column">
-        <input className="buglist-title" value={this.state.newLabelName} onChange={this.onChangeLabelName} />
-        <button onClick={this.props.remove} className="bugs-column-button bugs-column-remove"></button>
+        <div className="bugs-column-header">
+          <input className="buglist-title" value={this.state.newLabelName} onChange={this.onChangeLabelName} />
+          <button onClick={this.props.remove} className="bugs-column-button bugs-column-remove"></button>
+        </div>
         <BugsList bugs={bugs} changeBugLabel={changeBugLabel} />
       </div>
     );
