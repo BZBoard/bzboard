@@ -21,13 +21,7 @@ function _bugsKeyValueIterator(bugs) {
         return {done: true};
       }
       let bug = bugs[i++];
-      return {value: [bug.id, _bugFromJson(bug)], done: false};
+      return {value: [bug.id, bug], done: false};
     }
   };
-}
-
-function _bugFromJson(hash) {
-  // TODO: no need to keep the whole bug object, it's really huge
-  let bug = Object.assign({}, hash);
-  return bug;
 }

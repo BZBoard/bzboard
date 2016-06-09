@@ -36,7 +36,9 @@ export default {
       excludeIds = [excludeIds];
     }
     let url = BZ_DOMAIN + REST_BUG + "?query_format=advanced&quicksearch="
-              + encodeURIComponent(filter) + "&f0=bug_id&o0=anyexact&v0="
+              + encodeURIComponent(filter)
+              + "&include_fields=id,assigned,summary,status,is_open,last_change_time,assigned_to"
+              + "&f0=bug_id&o0=anyexact&v0="
               + excludeIds.join(",");
 
     return this._fetchFromUrl(url)
