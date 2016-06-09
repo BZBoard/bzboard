@@ -6,7 +6,7 @@ const BUGZILLA_CREDS_STORAGE = PREFIX + "bugzilla.credentials";
 function _get(key, defaultValue = {}) {
   let data = localStorage.getItem(key);
   if (!data) {
-    return {};
+    return defaultValue;
   }
   return JSON.parse(data);
 }
@@ -26,7 +26,7 @@ export default {
   },
 
   loadFilter() {
-    return Promise.resolve(_get(FILTER_STORAGE));
+    return Promise.resolve(_get(FILTER_STORAGE, null));
   },
 
   getAllLabels() {

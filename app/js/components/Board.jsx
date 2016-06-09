@@ -53,7 +53,7 @@ let Board = React.createClass({
   _changeBugLabel: function(bugId, newLabel) {
     const { bugs, labels, dispatch } = this.props;
     let bug = bugs.get(bugId);
-    let allLabelsNames = labels.toArray().map(label => label.name);
+    let allLabelsNames = labels.toArray().map(label => label.value);
     let newWhiteboard = bug.whiteboard || "";
     // Clear tracked labels
     allLabelsNames.forEach(label => {
@@ -70,6 +70,10 @@ let Board = React.createClass({
 
   render: function() {
     const { filter, labels, columns } = this.props;
+    if (!filter) {
+      return false;
+    }
+
     let labelColumns = [];
     for (let [id, label] of labels) {
       labelColumns.push(<LabelColumn key={id} label={label} bugs={columns.get(id)}
@@ -96,7 +100,7 @@ function sortBugsInColumns(bugs, labels) {
   labels.forEach(label => columns.set(label.id, []));
 
   bugs.forEach(bug => {
-    let label = labels.find(label => bug.whiteboard.includes(label.name)); // TODO : not optimized at all
+    let label = labels.find(label => bug.whiteboard.includes(label.value)); // TODO : not optimized at all
     let key = !label ? COLUMN_KEY_FILTER : label.id;
     columns.get(key).push(bug);
   });

@@ -11,7 +11,7 @@ const columnTarget = {
       return;
     }
 
-    return { label: props.label.name };
+    return { label: props.label.value };
   }
 };
 

@@ -6,8 +6,7 @@ export const FILTER_UPDATE_VALUE = 'FILTER_UPDATE_VALUE';
 export const FILTER_UPDATE_NAME  = 'FILTER_UPDATE_NAME';
 export const BUGS_REPLACE  = 'BUGS_REPLACE';
 export const BUGS_UPDATE   = 'BUGS_UPDATE';
-export const LABEL_BUG     = 'LABEL_BUG';
-export const LABEL_ADD    = 'LABEL_ADD';
+export const LABEL_ADD     = 'LABEL_ADD';
 export const LABEL_CREATE  = 'LABEL_CREATE';
 export const LABEL_UPDATE  = 'LABEL_UPDATE';
 export const LABEL_REMOVE  = 'LABEL_REMOVE';
@@ -16,6 +15,12 @@ export function loadFilter() {
   return dispatch => {
     BzBoardClient.loadFilter()
       .then(filter => {
+        if (!filter) {
+          filter = {
+            name: "Sync P1 bugs",
+            value: "product=Firefox AND component=Sync AND priority=P1"
+          };
+        }
         dispatch({
           type: FILTER_INIT,
           filter

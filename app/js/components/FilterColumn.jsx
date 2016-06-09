@@ -81,8 +81,7 @@ let filterColumn = React.createClass({
     let showEdit = () => {
       if (this.state.isEditing) {
         return <div className="edit-filter">
-                 <input value={this.state.newFilterValue}
-                  onChange={this.onChangeFilterValue} />
+                 <input value={this.state.newFilterValue} onChange={this.onChangeFilterValue} />
                  <button onClick={this.props.remove} className="bugs-column-button bugs-column-remove"></button>
                </div>
       }
