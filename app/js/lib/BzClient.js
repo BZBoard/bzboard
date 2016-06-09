@@ -4,8 +4,10 @@
 
 const BZ_DOMAIN = "https://bugzilla.mozilla.org";
 const REST_BUG  = "/rest/bug";
+import Url from 'url'
 
 const WHITEBOARD_STUB_KEY = "bzboard.whiteboard_stub";
+const INCLUDED_FIELDS = "id,assigned,summary,status,is_open,last_change_time,assigned_to";
 
 export default {
   _addWhiteboardStubToBugs(bugs) {
@@ -35,11 +37,19 @@ export default {
     if (!Array.isArray(excludeIds)) {
       excludeIds = [excludeIds];
     }
-    let url = BZ_DOMAIN + REST_BUG + "?query_format=advanced&quicksearch="
-              + encodeURIComponent(filter)
-              + "&include_fields=id,assigned,summary,status,is_open,last_change_time,assigned_to"
-              + "&f0=bug_id&o0=anyexact&v0="
-              + excludeIds.join(",");
+    let url;
+    if (filter.startsWith("https://bugzilla.mozilla.org/rest/bug")) {
+    // The user provided a rest search URL, not awesome but it works for now
+      let parsedUrl = Url.parse(filter, true);
+      parsedUrl.query.include_fields = INCLUDED_FIELDS;
+      url = Url.format(parsedUrl);
+    } else {
+      url = BZ_DOMAIN + REST_BUG + "?query_format=advanced&quicksearch="
+            + encodeURIComponent(filter)
+            + "&include_fields=" + INCLUDED_FIELDS
+            + "&f0=bug_id&o0=anyexact&v0="
+            + excludeIds.join(",");
+    }
 
     return this._fetchFromUrl(url)
     .then(bugs => this._addWhiteboardStubToBugs(bugs));
