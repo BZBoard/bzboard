@@ -65,6 +65,9 @@ let Board = React.createClass({
     if (newLabel) {
       newWhiteboard += newLabel;
     }
+    if (newWhiteboard == bug.whiteboard) { // Nothing changed!
+      return;
+    }
     dispatch(updateBugWhiteboard(bug.id, newWhiteboard));
   },
 
