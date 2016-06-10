@@ -1,7 +1,7 @@
 const PREFIX = "bzboard.";
 const FILTER_STORAGE = PREFIX + "filter";
 const LABELS_STORAGE = PREFIX + "labels";
-const BUGZILLA_CREDS_STORAGE = PREFIX + "bugzilla.credentials";
+const BUGZILLA_API_KEY_STORAGE = PREFIX + "bugzilla.credentials";
 
 function _get(key, defaultValue = {}) {
   let data = localStorage.getItem(key);
@@ -16,13 +16,12 @@ function _set(key, data) {
 }
 
 export default {
-
-  getBugzillaCredentials() {
-    return _get(BUGZILLA_CREDS_STORAGE, null);
+  getBugzillaApiKey() {
+    return _get(BUGZILLA_API_KEY_STORAGE, null);
   },
 
-  setBugzillaCredentials(creds) {
-    return _set(BUGZILLA_CREDS_STORAGE, creds);
+  setBugzillaApiKey(creds) {
+    return _set(BUGZILLA_API_KEY_STORAGE, creds);
   },
 
   loadFilter() {
