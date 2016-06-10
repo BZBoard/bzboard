@@ -15,6 +15,16 @@ function _set(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
+// Clone an object keeping only allowed props
+function cloneObject(original, allowedProps) {
+  return allowedProps.reduce(function(clone, prop) {
+    if (original[prop]) {
+      clone[prop] = original[prop];
+    }
+    return clone;
+  }, {});
+}
+
 export default {
   getBugzillaApiKey() {
     return _get(BUGZILLA_API_KEY_STORAGE, null);
@@ -32,33 +42,22 @@ export default {
     return Promise.resolve(_get(LABELS_STORAGE));
   },
 
-  updateFilter(props) {
-    let updatedProps = {};
-    if (props.name) { // TODO: Make a generic method for copying allowed props
-      updatedProps.name = props.name;
-    }
-    if (props.value) {
-      updatedProps.value = props.value;
-    }
+  updateFilter(filterProps) {
+    let updatedProps = cloneObject(filterProps, ["name", "value"]);
     let existingFilter = _get(FILTER_STORAGE);
     let updatedFilter = Object.assign({}, existingFilter, updatedProps);
     _set(FILTER_STORAGE, updatedFilter);
   },
 
-  updateLabel(label) {
+  updateLabel(labelProps) {
+    let id = labelProps.id;
     let labels = _get(LABELS_STORAGE);
-    let isNew = labels[label.id];
-    let labelToUpload;
-    if (isNew) {
-      labelToUpload = label;
+    if (!labels[id]) { // New label
+      labels[id] = labelProps;
     } else {
-      let updatedProps = {};
-      if (label.value) {
-        updatedProps.value = label.value;
-      }
-      labelToUpload = Object.assign({}, labels[label.id], updatedProps);
+      let updatedProps = cloneObject(labelProps, ["value"]);
+      labels[id] = Object.assign({}, labels[id], updatedProps);
     }
-    labels[label.id] = labelToUpload;
     _set(LABELS_STORAGE, labels);
   },
 
