@@ -7,7 +7,7 @@ const REST_BUG  = "/rest/bug";
 import Url from 'url'
 
 const WHITEBOARD_STUB_KEY = "bzboard.whiteboard_stub";
-const INCLUDED_FIELDS = "id,assigned,summary,status,is_open,last_change_time,assigned_to";
+const INCLUDED_FIELDS = "id,assigned_to,summary,status,whiteboard,is_open,last_change_time";
 
 export default {
   _addWhiteboardStubToBugs(bugs) {
@@ -42,6 +42,7 @@ export default {
     // The user provided a rest search URL, not awesome but it works for now
       let parsedUrl = Url.parse(filter, true);
       parsedUrl.query.include_fields = INCLUDED_FIELDS;
+      parsedUrl.search = null; // Reset this otherwise query is not used
       url = Url.format(parsedUrl);
     } else {
       url = BZ_DOMAIN + REST_BUG + "?query_format=advanced&quicksearch="
